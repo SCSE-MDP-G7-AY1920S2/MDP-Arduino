@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+### OS Related ###
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+[Dd]esktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride
