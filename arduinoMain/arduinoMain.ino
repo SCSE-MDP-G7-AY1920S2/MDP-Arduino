@@ -74,10 +74,7 @@ void loop() {
       sendFin();
     }
   }
-  
-
-//  goForward(10);
-  
+  Serial.flush();
 }
 
 //send sensor data
@@ -113,7 +110,7 @@ void sendSensor(){
 void sendFin()
 {
   toSend = ";{\"from\":\"Arduino\",\"com\":\"C\"}";
-
-  //Serial.println(toSend);
+  
+  Serial.println(toSend);
   Serial.flush();
 }
