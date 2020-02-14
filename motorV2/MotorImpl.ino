@@ -89,45 +89,28 @@ void turnRight(int angle) {
 }
 
 // Ramp down version of turnLeft. Used for checklist.
-void turnLeftRamp(int angle) {
-  int q = 0;
-  while (angle > 0) {
-    if ((angle / 90) > 0) {
-      q = angle / 90;
-      turnLeft(90 * q);
-      angle = angle % 90;
-    } else if ((angle / 45) > 0) {
-      q = angle / 45;
-      turnLeft(45 * q);
-      angle = angle % 45;
-    } else if ((angle / 10) > 0) {
-      q = angle / 10;
-      turnLeft(10 * q);
-      angle = angle % 10;
-    } else {
-      turnLeft(angle);
-    }
-  }
-}
+void turnLeftRamp(int angle) { turnRamp(angle, turnLeft); }
 
 // Ramp down version of turnRight. Used for checklist.
-void turnRightRamp(int angle) {
+void turnRightRamp(int angle) { turnRamp(angle, turnRight); }
+
+void turnRamp(int angle, void (*turnFunc)(int)) {
   int q = 0;
   while (angle > 0) {
     if ((angle / 90) > 0) {
       q = angle / 90;
-      turnRight(90 * q);
+      turnFunc(90 * q);
       angle = angle % 90;
     } else if ((angle / 45) > 0) {
       q = angle / 45;
-      turnRight(45 * q);
+      turnFunc(45 * q);
       angle = angle % 45;
     } else if ((angle / 10) > 0) {
       q = angle / 10;
-      turnRight(10 * q);
+      turnFunc(10 * q);
       angle = angle % 10;
     } else {
-      turnRight(angle);
+      turnFunc(angle);
     }
   }
 }
