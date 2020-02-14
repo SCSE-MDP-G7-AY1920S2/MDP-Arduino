@@ -15,8 +15,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  //calibrateSensors();
-  
   String message = "";
   String com = "";
   if(Serial.available() > 0){

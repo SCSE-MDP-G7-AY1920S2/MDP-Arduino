@@ -34,24 +34,15 @@
 
 //short IR sensor
 //c - calibrated
-ZSharpIR sr0(s0,SRmodel);
 ZSharpIR sr0c(s0,SRmodel);
-ZSharpIR sr1(s1,SRmodel);
 ZSharpIR sr1c(s1,SRmodel);
-ZSharpIR sr2(s2,SRmodel);
 ZSharpIR sr2c(s2,SRmodel);
 
-ZSharpIR sr4(s4,SRmodel);
 ZSharpIR sr4c(s4,SRmodel);
-ZSharpIR sr5(s5,SRmodel);
 ZSharpIR sr5c(s5,SRmodel);
 
 //long IR sensor
-ZSharpIR sr3 = ZSharpIR(s3,LRmodel);
 ZSharpIR sr3c = ZSharpIR(s3,LRmodel);
-
-//previous dist
-int prev_dist[6] = {0,0,0,0,0,0};
 
 void setupSensorsCalibration(){
   int tablesr0c[]={3,623,437,313,249,176,160,140,130,129,117,86,70,50,38,30,20,15,10,0};
@@ -72,39 +63,47 @@ void setupSensorsCalibration(){
 }
 
 int getFrontRight(){
-  return getDistance(sr0, sr0c, 0);
+  ZSharpIR sr0(s0, SRmodel);
+  return getDistance(sr0, sr0c);
 }
 
 int getFrontMiddle(){
-  return getDistance(sr1, sr1c, 1);
+  ZSharpIR sr1(s1, SRmodel);
+  return getDistance(sr1, sr1c);
 }
 
 int getFrontLeft(){
-  return getDistance(sr2, sr2c, 2);
+  ZSharpIR sr2(s2, SRmodel);
+  return getDistance(sr2, sr2c);
 }
 
 int getLeft(){
-  return getDistance(sr3, sr3c, 3);
+  ZSharpIR sr3(s3, LRmodel);
+  return getDistance(sr3, sr3c);
 }
 
 int getRightBack(){
-  return getDistance(sr4, sr4c, 4);
+  ZSharpIR sr4(s4, SRmodel);
+  return getDistance(sr4, sr4c);
 }
 
 int getRightFront(){
-  return getDistance(sr5, sr5c, 5);
+  ZSharpIR sr5(s5, SRmodel);
+  return getDistance(sr5, sr5c);
 }
 
 //return distance from sensors (cm)
-int getDistance(ZSharpIR sensor, ZSharpIR sensorc, int index){
+int getDistance(ZSharpIR sensor, ZSharpIR sensorc){
   int dist;
   //multipler to set ratio for calibrated and non-calibrated value
   double multipler = 1;
-  int lrMax = 50;
+  int lrMax = 60;
   int srMax = 30;
-  
+
   boolean sr = true;
-  if(sensor.getMax() != 800) sr = false;
+  if(sensor.getMax() != 800){
+    sr = false;
+  }
 
   dist = sensorc.distance();
 
@@ -121,9 +120,12 @@ int getDistance(ZSharpIR sensor, ZSharpIR sensorc, int index){
   else{
     dist = multipler*dist + (1-multipler)*(sensor.distance()/10);
   }
-
-  prev_dist[index] = dist;
-  return dist/10;
+  dist = dist/10;
+  
+  if(sr==false){
+    return dist;
+  }
+  return dist+1;
 }
 
 //calibrate sensors
