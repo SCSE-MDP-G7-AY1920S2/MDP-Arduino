@@ -15,8 +15,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  //calibrateSensors();
-  
   String message = "";
   String com = "";
   if(Serial.available() > 0){
@@ -74,10 +72,7 @@ void loop() {
       sendFin();
     }
   }
-  
-
-//  goForward(10);
-  
+  Serial.flush();
 }
 
 //send sensor data
@@ -113,7 +108,7 @@ void sendSensor(){
 void sendFin()
 {
   toSend = ";{\"from\":\"Arduino\",\"com\":\"C\"}";
-
-  //Serial.println(toSend);
+  
+  Serial.println(toSend);
   Serial.flush();
 }
