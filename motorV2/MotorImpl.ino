@@ -160,6 +160,7 @@ void goBackwardTicks(const int totalTicks, const int baseSpeed, FastPID& pid) {
       // rightTick as setpoint, leftTick as feedback.
       int tickOffset = pid.step(rightTick, leftTick);
       md.setSpeeds(-(currentSpeed + tickOffset), -(currentSpeed - tickOffset));
+      lastTime = now;
     }
   }
   endMotor();
@@ -179,6 +180,7 @@ void turnLeftTicks(const int totalAngle, const int stepSize,
         // rightTick as setpoint, leftTick as feedback.
         int tickOffset = pid.step(rightTick, leftTick);
         md.setSpeeds(-(currentSpeed + tickOffset), currentSpeed - tickOffset);
+        lastTime = now;
       }
     }
   }
@@ -196,6 +198,7 @@ void turnRightTicks(const int totalAngle, const int stepSize,
         // rightTick as setpoint, leftTick as feedback.
         int tickOffset = pid.step(rightTick, leftTick);
         md.setSpeeds((currentSpeed + tickOffset), -(currentSpeed - tickOffset));
+        lastTime = now;
       }
     }
   }
