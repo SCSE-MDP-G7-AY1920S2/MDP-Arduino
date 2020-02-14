@@ -40,5 +40,7 @@ ehthumbs.db
 .DS_Store
 .AppleDouble
 .LSOverride
-.vscode/c_cpp_properties.json
-.vscode/arduino.json
+
+# Folders
+.vscode/
+libraries/
