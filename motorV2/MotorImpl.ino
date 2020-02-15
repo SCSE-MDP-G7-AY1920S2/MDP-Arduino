@@ -116,7 +116,7 @@ void turnRamp(int angle, void (*turnFunc)(int)) {
 }
 
 // Move forward for the number of totalTicks.
-void goForwardTicks(const int totalTicks, const int baseSpeed, FastPID& pid) {
+void goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid) {
   setTicks();
   startMotor();
   int currentSpeed = baseSpeed;
@@ -149,7 +149,7 @@ void goForwardTicks(const int totalTicks, const int baseSpeed, FastPID& pid) {
 }
 
 // Move backward for the number of totalTicks.
-void goBackwardTicks(const int totalTicks, const int baseSpeed, FastPID& pid) {
+void goBackwardTicks(int totalTicks, int baseSpeed, FastPID& pid) {
   setTicks();
   startMotor();
   int currentSpeed = baseSpeed;
@@ -169,8 +169,8 @@ void goBackwardTicks(const int totalTicks, const int baseSpeed, FastPID& pid) {
 // Turn left for totalAngle in a step-by-step manner.
 // stepSize is angles to turn for each step, and turnTicks is
 // the number of ticks for the specified stepSize.
-void turnLeftTicks(const int totalAngle, const int stepSize,
-                   const int turnTicks, const int currentSpeed, FastPID& pid) {
+void turnLeftTicks(int totalAngle, int stepSize, int turnTicks,
+                   int currentSpeed, FastPID& pid) {
   for (int i = 0; i < totalAngle; i += stepSize) {
     setTicks();
     startMotor();
@@ -187,8 +187,8 @@ void turnLeftTicks(const int totalAngle, const int stepSize,
   endMotor();
 }
 
-void turnRightTicks(const int totalAngle, const int stepSize,
-                    const int turnTicks, const int currentSpeed, FastPID& pid) {
+void turnRightTicks(int totalAngle, int stepSize, int turnTicks,
+                    int currentSpeed, FastPID& pid) {
   for (int i = 0; i < totalAngle; i += stepSize) {
     setTicks();
     startMotor();
