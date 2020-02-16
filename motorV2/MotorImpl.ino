@@ -120,12 +120,13 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
       angle = angle % 10;
     } else {
       turnFunc(angle);
+      angle = 0;
     }
   }
 }
 
 // Move forward for the number of totalTicks. Start slow and gradually increase
-// speed until baseSpeed, and reduce speed when the totalTick is approaching.
+// speed until baseSpeed, and reduce speed when approaching totalTicks.
 void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
   _setTicks();
   startMotor();
