@@ -1,4 +1,4 @@
-// Motor Driver shielf
+// Motor Driver shield.
 DualVNH5019MotorShield md;
 
 // Encoder Pin declarations.
