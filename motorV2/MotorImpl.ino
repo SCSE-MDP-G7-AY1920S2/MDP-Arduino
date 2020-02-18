@@ -39,90 +39,14 @@ const int TURN_TICKS_R_1 = 4;
 volatile int rightTick = 0;
 volatile int leftTick = 0;
 
-void goForward(int cm) {
-  int totalTicks = _cmToTicks(TICKS, cm);
-  _goForwardRamp(totalTicks, MOVE_SLOW_SPEED, ShortTurnPID);
-}
+void _incLeftMotorTicks() { leftTick++; }
 
-void goForwardFast(int cm) {
-  int totalTicks = _cmToTicks(TICKS_FAST, cm);
-  _goForwardRamp(totalTicks, MOVE_FAST_SPEED, ShortTurnPID);
-}
+void _incRightMotorTicks() { rightTick++; }
 
-void goForwardTicks(int ticks) {
-  _goForwardTicks(ticks, MOVE_TICK_SPEED, ShortTurnPID);
-}
-
-void goBackward(int cm) {
-  int totalTicks = _cmToTicks(TICKS, cm);
-  _goBackwardTicks(totalTicks, MOVE_SLOW_SPEED, ShortTurnPID);
-}
-
-void goBackwardFast(int cm) {
-  int totalTicks = _cmToTicks(TICKS_FAST, cm);
-  _goBackwardTicks(totalTicks, MOVE_FAST_SPEED, ShortTurnPID);
-}
-
-void goBackwardTicks(int ticks) {
-  _goBackwardTicks(ticks, MOVE_TICK_SPEED, ShortTurnPID);
-}
-
-void turnLeft(int angle) {
-  if (angle >= 90 && angle % 90 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/90, TURN_TICKS_L_90, TURN_FAST_SPEED,
-                   ShortTurnPID);
-  else if (angle % 45 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/45, TURN_TICKS_L_45, TURN_NORMAL_SPEED,
-                   ShortTurnPID);
-  else if (angle % 10 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/10, TURN_TICKS_L_10, TURN_NORMAL_SPEED,
-                   ShortTurnPID);
-  else
-    _turnLeftTicks(angle, /*stepSize=*/1, TURN_TICKS_L_1, TURN_SLOW_SPEED,
-                   ShortTurnPID);
-}
-
-void turnRight(int angle) {
-  if (angle >= 90 && angle % 90 == 0)
-    _turnRightTicks(angle, /*stepSize=*/90, TURN_TICKS_R_90, TURN_FAST_SPEED,
-                    ShortTurnPID);
-  else if (angle % 45 == 0)
-    _turnRightTicks(angle, /*stepSize=*/45, TURN_TICKS_R_45, TURN_NORMAL_SPEED,
-                    ShortTurnPID);
-  else if (angle % 10 == 0)
-    _turnRightTicks(angle, /*stepSize=*/10, TURN_TICKS_R_10, TURN_NORMAL_SPEED,
-                    ShortTurnPID);
-  else
-    _turnRightTicks(angle, /*stepSize=*/1, TURN_TICKS_R_1, TURN_SLOW_SPEED,
-                    ShortTurnPID);
-}
-
-// Ramp down version of turnLeft. Used for checklist.
-void turnLeftRamp(int angle) { _turnRamp(angle, turnLeft); }
-
-// Ramp down version of turnRight. Used for checklist.
-void turnRightRamp(int angle) { _turnRamp(angle, turnRight); }
-
-void _turnRamp(int angle, void (*turnFunc)(int)) {
-  int q = 0;
-  while (angle > 0) {
-    if ((angle / 90) > 0) {
-      q = angle / 90;
-      turnFunc(90 * q);
-      angle = angle % 90;
-    } else if ((angle / 45) > 0) {
-      q = angle / 45;
-      turnFunc(45 * q);
-      angle = angle % 45;
-    } else if ((angle / 10) > 0) {
-      q = angle / 10;
-      turnFunc(10 * q);
-      angle = angle % 10;
-    } else {
-      turnFunc(angle);
-      angle = 0;
-    }
-  }
+void _setTicks() {
+  ShortTurnPID.clear();
+  rightTick = 0;
+  leftTick = 0;
 }
 
 // Move forward for the number of totalTicks. Start slow and gradually increase
@@ -159,7 +83,8 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
   endMotor();
 }
 
-void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid) {
+void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid,
+                     bool reverse = false) {
   _setTicks();
   startMotor();
   int currentSpeed = baseSpeed;
@@ -169,24 +94,11 @@ void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid) {
     if (now - lastTime >= SampleTime) {
       // rightTick as setpoint, leftTick as feedback.
       int tickOffset = pid.step(rightTick, leftTick);
-      md.setSpeeds(currentSpeed + tickOffset, currentSpeed - tickOffset);
-      lastTime = now;
-    }
-  }
-  endMotor();
-}
-
-void _goBackwardTicks(int totalTicks, int baseSpeed, FastPID& pid) {
-  _setTicks();
-  startMotor();
-  int currentSpeed = baseSpeed;
-
-  while (rightTick <= totalTicks || leftTick <= totalTicks) {
-    unsigned long now = millis();
-    if (now - lastTime >= SampleTime) {
-      // rightTick as setpoint, leftTick as feedback.
-      int tickOffset = pid.step(rightTick, leftTick);
-      md.setSpeeds(-(currentSpeed + tickOffset), -(currentSpeed - tickOffset));
+      int leftSpeed =
+          reverse ? -(currentSpeed + tickOffset) : (currentSpeed + tickOffset);
+      int rightSpeed =
+          reverse ? -(currentSpeed - tickOffset) : (currentSpeed - tickOffset);
+      md.setSpeeds(leftSpeed, rightSpeed);
       lastTime = now;
     }
   }
@@ -197,7 +109,7 @@ void _goBackwardTicks(int totalTicks, int baseSpeed, FastPID& pid) {
 // stepSize is angles to turn for each step, and turnTicks is
 // the number of ticks for the specified stepSize.
 void _turnLeftTicks(int totalAngle, int stepSize, int turnTicks,
-                    int currentSpeed, FastPID& pid) {
+                    int currentSpeed, FastPID& pid, bool reverse = false) {
   for (int i = 0; i < totalAngle; i += stepSize) {
     _setTicks();
     startMotor();
@@ -206,25 +118,11 @@ void _turnLeftTicks(int totalAngle, int stepSize, int turnTicks,
       if (now - lastTime >= SampleTime) {
         // rightTick as setpoint, leftTick as feedback.
         int tickOffset = pid.step(rightTick, leftTick);
-        md.setSpeeds(-(currentSpeed + tickOffset), currentSpeed - tickOffset);
-        lastTime = now;
-      }
-    }
-  }
-  endMotor();
-}
-
-void _turnRightTicks(int totalAngle, int stepSize, int turnTicks,
-                     int currentSpeed, FastPID& pid) {
-  for (int i = 0; i < totalAngle; i += stepSize) {
-    _setTicks();
-    startMotor();
-    while (rightTick <= turnTicks || leftTick <= turnTicks) {
-      unsigned long now = millis();
-      if (now - lastTime >= SampleTime) {
-        // rightTick as setpoint, leftTick as feedback.
-        int tickOffset = pid.step(rightTick, leftTick);
-        md.setSpeeds((currentSpeed + tickOffset), -(currentSpeed - tickOffset));
+        int leftSpeed = reverse ? (currentSpeed + tickOffset)
+                                : -(currentSpeed + tickOffset);
+        int rightSpeed = reverse ? -(currentSpeed - tickOffset)
+                                 : (currentSpeed - tickOffset);
+        md.setSpeeds(leftSpeed, rightSpeed);
         lastTime = now;
       }
     }
@@ -238,19 +136,93 @@ int _cmToTicks(const int* ticks, int cm) {
   return 0;
 }
 
-void _incLeftMotorTicks() { leftTick++; }
-
-void _incRightMotorTicks() { rightTick++; }
-
-void _setTicks() {
-  ShortTurnPID.clear();
-  rightTick = 0;
-  leftTick = 0;
+void _turnRamp(int angle, void (*turnFunc)(int)) {
+  int q = 0;
+  while (angle > 0) {
+    if ((angle / 90) > 0) {
+      q = angle / 90;
+      turnFunc(90 * q);
+      angle = angle % 90;
+    } else if ((angle / 45) > 0) {
+      q = angle / 45;
+      turnFunc(45 * q);
+      angle = angle % 45;
+    } else if ((angle / 10) > 0) {
+      q = angle / 10;
+      turnFunc(10 * q);
+      angle = angle % 10;
+    } else {
+      turnFunc(angle);
+      angle = 0;
+    }
+  }
 }
 
-void setupPID() {
-  ShortTurnPID.setOutputRange(-400, 400);
+void goForward(int cm) {
+  int totalTicks = _cmToTicks(TICKS, cm);
+  _goForwardRamp(totalTicks, MOVE_SLOW_SPEED, ShortTurnPID);
 }
+
+void goForwardFast(int cm) {
+  int totalTicks = _cmToTicks(TICKS_FAST, cm);
+  _goForwardRamp(totalTicks, MOVE_FAST_SPEED, ShortTurnPID);
+}
+
+void goForwardTicks(int ticks) {
+  _goForwardTicks(ticks, MOVE_TICK_SPEED, ShortTurnPID);
+}
+
+void goBackward(int cm) {
+  int totalTicks = _cmToTicks(TICKS, cm);
+  _goForwardTicks(totalTicks, MOVE_SLOW_SPEED, ShortTurnPID, /*reverse=*/true);
+}
+
+void goBackwardFast(int cm) {
+  int totalTicks = _cmToTicks(TICKS_FAST, cm);
+  _goForwardTicks(totalTicks, MOVE_FAST_SPEED, ShortTurnPID, /*reverse=*/true);
+}
+
+void goBackwardTicks(int ticks) {
+  _goForwardTicks(ticks, MOVE_TICK_SPEED, ShortTurnPID, /*reverse=*/true);
+}
+
+void turnLeft(int angle) {
+  if (angle >= 90 && angle % 90 == 0)
+    _turnLeftTicks(angle, /*stepSize=*/90, TURN_TICKS_L_90, TURN_FAST_SPEED,
+                   ShortTurnPID);
+  else if (angle % 45 == 0)
+    _turnLeftTicks(angle, /*stepSize=*/45, TURN_TICKS_L_45, TURN_NORMAL_SPEED,
+                   ShortTurnPID);
+  else if (angle % 10 == 0)
+    _turnLeftTicks(angle, /*stepSize=*/10, TURN_TICKS_L_10, TURN_NORMAL_SPEED,
+                   ShortTurnPID);
+  else
+    _turnLeftTicks(angle, /*stepSize=*/1, TURN_TICKS_L_1, TURN_SLOW_SPEED,
+                   ShortTurnPID);
+}
+
+void turnRight(int angle) {
+  if (angle >= 90 && angle % 90 == 0)
+    _turnLeftTicks(angle, /*stepSize=*/90, TURN_TICKS_R_90, TURN_FAST_SPEED,
+                   ShortTurnPID, /*reverse=*/true);
+  else if (angle % 45 == 0)
+    _turnLeftTicks(angle, /*stepSize=*/45, TURN_TICKS_R_45, TURN_NORMAL_SPEED,
+                   ShortTurnPID, /*reverse=*/true);
+  else if (angle % 10 == 0)
+    _turnLeftTicks(angle, /*stepSize=*/10, TURN_TICKS_R_10, TURN_NORMAL_SPEED,
+                   ShortTurnPID, /*reverse=*/true);
+  else
+    _turnLeftTicks(angle, /*stepSize=*/1, TURN_TICKS_R_1, TURN_SLOW_SPEED,
+                   ShortTurnPID, /*reverse=*/true);
+}
+
+// Ramp down version of turnLeft. Used for checklist.
+void turnLeftRamp(int angle) { _turnRamp(angle, turnLeft); }
+
+// Ramp down version of turnRight. Used for checklist.
+void turnRightRamp(int angle) { _turnRamp(angle, turnRight); }
+
+void setupPID() { ShortTurnPID.setOutputRange(-400, 400); }
 
 void startEncoder() {
   md.init();
