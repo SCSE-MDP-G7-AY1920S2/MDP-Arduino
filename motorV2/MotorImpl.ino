@@ -153,7 +153,7 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
       angle = angle % 10;
     } else {
       turnFunc(angle);
-      angle = 0;
+      break;
     }
   }
 }
