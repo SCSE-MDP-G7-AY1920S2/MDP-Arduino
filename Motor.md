@@ -9,7 +9,6 @@ this file outlines the major changes to the implementation.
 - `goForward` will not have a delay when `offset` is less than 1.
   - Sample time is 5ms, which is already quite small.
   - The initial change in error should be managed by the derivative (D) controller.
-  - [ ] This needs further verification.
 
 - `turnLeftFast` and `turnRightFast` are deprecated.
   - These functions sets faster motor speed only when turning 90 degrees, the rest is identical to `turnLeft` and `turnRight`.
