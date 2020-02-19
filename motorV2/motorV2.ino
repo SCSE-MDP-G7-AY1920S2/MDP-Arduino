@@ -13,7 +13,9 @@ void setup() {
   delay(1000);
   // calibrateStart();
 
-  goForward(10);
+  turnRightRamp(180);
+
+
 }
 
 void loop() { delay(1000); }

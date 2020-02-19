@@ -8,7 +8,7 @@ const int RIGHT_PULSE = 3;
 // PID setup.
 const unsigned SampleTime = 5;
 unsigned long lastTime = millis();
-FastPID ShortTurnPID(/*kp=*/12.3, /*ki=*/5.4, /*kd=*/0.01,
+FastPID ShortTurnPID(/*kp=*/12.3, /*ki=*/6.1, /*kd=*/0.0036,
                      /*hz=*/200, /*bits=*/16, /*sign=*/true);
 
 // Speed config.
@@ -20,19 +20,19 @@ const int TURN_NORMAL_SPEED = 280;
 const int TURN_SLOW_SPEED = 100;
 
 // Ticks lookup table.
-const int TICKS[15] = {273,  609,  904,  1183, 1480, 1790, 2090, 2390,
+const int TICKS[15] = {297, 596, 890, 1191, 1487, 1790, 2090, 2390,
                        2705, 2980, 3275, 3590, 3855, 4130, 4430};  // 282
-const int TICKS_FAST[15] = {282,  599,  890,  1163, 1455, 1790, 2080, 2390,
-                            2715, 2970, 3265, 3580, 3845, 4160, 4420};  // 280
+const int TICKS_FAST[15] = {299, 600, 893, 1188, 1484, 1789, 2085, 2387,
+                            2688, 2980, 3275, 3575, 3870, 4173, 4480};  // 280
 
-const int TURN_TICKS_L_90 = 380;
-const int TURN_TICKS_L_10 = 43;
-const int TURN_TICKS_L_45 = 181;
+const int TURN_TICKS_L_90 = 391;
+const int TURN_TICKS_L_45 = 180;
+const int TURN_TICKS_L_10 = 28;
 const int TURN_TICKS_L_1 = 4;
 
-const int TURN_TICKS_R_90 = 383;
-const int TURN_TICKS_R_10 = 43;
-const int TURN_TICKS_R_45 = 181;
+const int TURN_TICKS_R_90 = 391;
+const int TURN_TICKS_R_45 = 186;
+const int TURN_TICKS_R_10 = 28;
 const int TURN_TICKS_R_1 = 4;
 
 // Interrupt driven tick counts.
@@ -74,8 +74,8 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
       if (offset >= 1) {
         md.setSpeeds(currentSpeed + tickOffset, currentSpeed - tickOffset);
       } else {
-        md.setSpeeds(offset * (currentSpeed - tickOffset),
-                     offset * (currentSpeed + tickOffset));
+        md.setSpeeds(offset * (currentSpeed + tickOffset),
+                     offset * (currentSpeed - tickOffset));
       }
       lastTime = now;
     }
@@ -126,6 +126,7 @@ void _turnLeftTicks(int totalAngle, int stepSize, int turnTicks,
         lastTime = now;
       }
     }
+    delay(5);
   }
   endMotor();
 }
@@ -155,6 +156,7 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
       turnFunc(angle);
       break;
     }
+    delay(100);
   }
 }
 
