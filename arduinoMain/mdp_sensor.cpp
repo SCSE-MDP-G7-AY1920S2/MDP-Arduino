@@ -16,7 +16,7 @@ ZSharpIR sr5c(s5, SRmodel);
 ZSharpIR sr3c = ZSharpIR(s3, LRmodel);
 
 //return distance from sensors (cm)
-int getDistance(const ZSharpIR& sensorc){
+int getDistance(ZSharpIR& sensorc){
   int dist;
 
   dist = sensorc.distance();
@@ -26,7 +26,7 @@ int getDistance(const ZSharpIR& sensorc){
   return dist+1;
 }
 
-int getDistanceRaw(const ZSharpIR& sensorc){
+int getDistanceRaw(ZSharpIR& sensorc){
   int dist;
 
   dist = sensorc.distance();
