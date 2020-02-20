@@ -63,121 +63,64 @@ void setupSensorsCalibration(){
 }
 
 int getFrontRight(){
-  ZSharpIR sr0(s0, SRmodel);
-  return getDistance(sr0, sr0c);
+  return getDistance(sr0c);
 }
 
 int getFrontRightRaw(){
-  ZSharpIR sr0(s0, SRmodel);
-  return getDistanceRaw(sr0, sr0c);
+  return getDistanceRaw(sr0c);
 }
 
 int getFrontMiddle(){
-  ZSharpIR sr1(s1, SRmodel);
-  return getDistance(sr1, sr1c);
+  return getDistance(sr1c);
 }
 
 int getFrontMiddleRaw(){
-  ZSharpIR sr1(s1, SRmodel);
-  return getDistanceRaw(sr1, sr1c);
+  return getDistanceRaw(sr1c);
 }
 
 int getFrontLeft(){
-  ZSharpIR sr2(s2, SRmodel);
-  return getDistance(sr2, sr2c);
+  return getDistance(sr2c);
 }
 
 int getFrontLeftRaw(){
-  ZSharpIR sr2(s2, SRmodel);
-  return getDistanceRaw(sr2, sr2c);
+  return getDistanceRaw(sr2c);
 }
 
 int getLeft(){
-  ZSharpIR sr3(s3, LRmodel);
-  return getDistance(sr3, sr3c);
+  return getDistance(sr3c)-1;
 }
 
 int getRightBack(){
-  ZSharpIR sr4(s4, SRmodel);
-  return getDistance(sr4, sr4c);
+  return getDistance(sr4c);
 }
 
 int getRightBackRaw(){
-  ZSharpIR sr4(s4, SRmodel);
-  return getDistanceRaw(sr4, sr4c);
+  return getDistanceRaw(sr4c);
 }
 
 int getRightFront(){
-  ZSharpIR sr5(s5, SRmodel);
-  return getDistance(sr5, sr5c);
+  return getDistance(sr5c);
 }
 
 int getRightFrontRaw(){
-  ZSharpIR sr5(s5, SRmodel);
-  return getDistanceRaw(sr5, sr5c);
+  return getDistanceRaw(sr5c);
 }
 
 //return distance from sensors (cm)
-int getDistance(ZSharpIR sensor, ZSharpIR sensorc){
+int getDistance(ZSharpIR sensorc){
   int dist;
-  //multipler to set ratio for calibrated and non-calibrated value
-  double multipler = 1;
-  int lrMax = 60;
-  int srMax = 30;
-
-  boolean sr = true;
-  if(sensor.getMax() != 800){
-    sr = false;
-  }
 
   dist = sensorc.distance();
 
-  //if reading above/ below a certain range
-  if(sr==false && dist > lrMax){
-    dist = sensor.distance()/10;
-  }
-  
-  else if(sr==true && dist > srMax){
-    dist = sensor.distance()/10;
-  }
-  
-  //otherwise use calibrated value
-  else{
-    dist = multipler*dist + (1-multipler)*(sensor.distance()/10);
-  }
   dist = dist/10;
-  
-  if(sr==false){
-    return dist;
-  }
-  if(sensorc.getIrPin() == sr4c.getIrPin()){
-    return (dist+1)/10 + 1;
-  }
+
   return dist+1;
 }
 
-int getDistanceRaw(ZSharpIR sensor, ZSharpIR sensorc){
+int getDistanceRaw(ZSharpIR sensorc){
   int dist;
-  //multipler to set ratio for calibrated and non-calibrated value
-  double multipler = 1;
-  int lrMax = 60;
-  int srMax = 30;
-  boolean sr = true;
-  if(sensor.getMax() != 800){
-    sr = false;
-  }
-  dist = sensorc.distance();
 
-  //if reading above/ below a certain range
-  if(sr==false && dist > lrMax){
-    dist = sensor.distance()/10;
-  }
-  else if(sr==true && dist > srMax){
-    dist = sensor.distance()/10;
-  }
-  else{
-    dist = multipler*dist + (1-multipler)*(sensor.distance()/10);
-  }
+  dist = sensorc.distance();
 
   return dist;
 }
