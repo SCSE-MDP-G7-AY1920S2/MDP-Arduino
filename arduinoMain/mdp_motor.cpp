@@ -205,13 +205,9 @@ void turnLeftRamp(int angle) { _turnRamp(angle, turnLeft); }
 // Ramp down version of turnRight. Used for checklist.
 void turnRightRamp(int angle) { _turnRamp(angle, turnRight); }
 
-void setLeftSpeed(int speed) {
-  md.setM1Speed(speed);
-}
+void setLeftSpeed(int speed) { md.setM1Speed(speed); }
 
-void setRightSpeed(int speed) {
-  md.setM2Speed(speed);
-}
+void setRightSpeed(int speed) { md.setM2Speed(speed); }
 
 void setupPID() { ShortTurnPID.setOutputRange(-400, 400); }
 

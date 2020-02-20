@@ -1,6 +1,5 @@
-#include <ZSharpIR.h>
-#include <DualVNH5019MotorShield.h>
 #include "mdp_motor.h"
+#include "mdp_sensor.h"
 
 String toSend = "";
 String command = "";
