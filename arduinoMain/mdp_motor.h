@@ -39,6 +39,8 @@ void turnLeft(int angle);
 void turnLeftRamp(int angle);
 void turnRight(int angle);
 void turnRightRamp(int angle);
+void setLeftSpeed(int speed);
+void setRightSpeed(int speed);
 void setupPID();
 void startEncoder();
 void stopEncoder();
