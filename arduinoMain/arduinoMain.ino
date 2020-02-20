@@ -17,120 +17,92 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  //Serial.print(getLeft());
-  //Serial.print(", ");
-  //Serial.print(getRightBack());
-  //Serial.print(", ");
-  //Serial.print(getFrontRight());
-  //Serial.print("\n");
-  //delay(1000);
-
   String message = "";
   String com = "";
-  if(Serial.available() > 0){
+  if (Serial.available() > 0) {
     message = Serial.readString();
 
-    //send sensor values
-    if (message.charAt(0) == 'K'){
-      sendSensor();
-    }
+    switch (message.charAt(0)) {
+      case 'K':  // send sensor values.
+        sendSensor();
+        break;
 
-    //exploration move front
-    else if (message.charAt(0) == 'W'){
-      goForward(10);
-      sendSensor();
-    }
+      case 'W':  // exploration move front.
+        goForward(10);
+        sendSensor();
+        break;
 
-    //exploration move back
-    else if (message.charAt(0) == 'S'){
-      goBackward(10);
-      sendSensor();
-    }
+      case 'S':  // exploration move back.
+        goBackward(10);
+        sendSensor();
+        break;
 
-    //exploration move lefft
-    else if (message.charAt(0) == 'A'){
-      turnLeft(90);
-      sendSensor();
-    }
+      case 'A':  // exploration turn left.
+        turnLeft(90);
+        sendSensor();
+        break;
 
-    else if (message.charAt(0) == 'D'){
-      turnRight(90);
-      sendSensor();
-    }
+      case 'D':  // exploration turn right.
+        turnRight(90);
+        sendSensor();
+        break;
 
-    //exploration end
-    else if (message.charAt(0) == 'E'){
-      sendFin();
-    }
+      case 'E':  // exploration end.
+        sendFin();
+        break;
 
-    //calibrate front
-    else if (message.charAt(0) == 'F'){
-      calibrateFront();
-      sendFin();
-    }
+      case 'F':  // calibrate front.
+        calibrateFront();
+        sendFin();
+        break;
 
-    //parallelwall
-    else if (message.charAt(0) == 'R'){
-      parallelWall();
-      sendFin();
-    }
+      case 'R':  // parallel wall.
+        parallelWall();
+        sendFin();
+        break;
 
-    //turns robot back to "North" position
-    //robot facing "South"
-    else if (message.charAt(0) == 'G'){
-      delay(15000);
-      turnLeft(90);
-      parallelWall();
-      distanceFront();
-      allignFront();
-      turnRight(90);
-      distanceFront();
-      allignFront();
-      turnRight(90);
-    }
+      case 'C':  // allign robot using front and side walls.
+        calibrateAll();
+        sendFin();
+        break;
 
-    //robot facing "East"
-    else if (message.charAt(0) == 'H'){
-      delay(15000);
-      parallelWall();
-      distanceFront();
-      allignFront();
-      turnRight(90);
-      distanceFront();
-      allignFront();
-      turnRight(90);
-    }
+      // Reset robot to face "North".
+      case 'G':
+        southToNorth();
+        break;
 
-    //allign robot using front and side walls
-    else if (message.charAt(0) == 'C'){
-      calibrateAll();
-      sendFin();
-    }
+      case 'H':
+        eastToNorth();
+        break;
 
-    //finish
-    else if (message.charAt(0) == 'F'){
-      calibrateFront();
-      sendFin();
+      // Fast actions.
+      case 'w':
+      case 'a':
+      case 's':
+      case 'd':
+        splitStringToAction(message);
+        break;
+
+      default:
+        break;
     }
   }
 
   Serial.flush();
 }
 
-//aligns the robot against the wall
-void parallelWall(){
-
+// aligns the robot against the wall
+void parallelWall() {
   double rf = getRightFrontRaw();
-  double rb = getRightBackRaw()+0.4;
-  double diff = rf-rb;
+  double rb = getRightBackRaw() + 0.4;
+  double diff = rf - rb;
   startMotor();
 
-  while(abs(diff) > 0.5){
-    if(rf < rb){ //facing right
+  while (abs(diff) > 0.5) {
+    if (rf < rb) {  // facing right
       setRightSpeed(0);
       setLeftSpeed(100);
-    }
-    else if(rb < rf){ //facing left
+    } else if (rb < rf) {  // facing left
       setLeftSpeed(0);
       setRightSpeed(100);
     }
@@ -139,31 +111,29 @@ void parallelWall(){
     setRightSpeed(0);
 
     rf = getRightFrontRaw();
-    rb = getRightBackRaw()+0.4;
-    diff = rf-rb;
+    rb = getRightBackRaw() + 0.4;
+    diff = rf - rb;
   }
   endMotor();
 }
 
-//align robot to the front (angle)
-void allignFront(){
-
+// align robot to the front (angle)
+void allignFront() {
   int fr = getFrontRightRaw();
   int fl = getFrontLeftRaw();
-  int diff = fr-fl;
-  
+  int diff = fr - fl;
+
   startMotor();
 
-  while(abs(diff) != 0){
+  while (abs(diff) != 0) {
     Serial.print(getFrontLeftRaw());
     Serial.print(", ");
     Serial.print(getFrontRightRaw());
     Serial.print("\n");
-    if(fl > fr){ //facing right
+    if (fl > fr) {  // facing right
       setRightSpeed(0);
       setLeftSpeed(100);
-    }
-    else if(fr > fl){ //facing left
+    } else if (fr > fl) {  // facing left
       setRightSpeed(100);
       setLeftSpeed(0);
     }
@@ -173,85 +143,153 @@ void allignFront(){
 
     fr = getFrontRightRaw();
     fl = getFrontLeftRaw();
-    diff = fr-fl;
+    diff = fr - fl;
   }
   endMotor();
 }
 
-//align robot to the wall (distance)
-void distanceFront()
-{
+// align robot to the wall (distance)
+void distanceFront() {
   int count = 0;
   startMotor();
-  while (getFrontMiddleRaw() != 7 && count < 20)
-  {
-    if (getFrontRightRaw() < 7)
-      goBackwardTicks(1);
+  while (getFrontMiddleRaw() != 7 && count < 20) {
+    if (getFrontRightRaw() < 7) goBackwardTicks(1);
 
-    if (getFrontRightRaw() > 7)
-      goForwardTicks(1);
+    if (getFrontRightRaw() > 7) goForwardTicks(1);
     count++;
   }
   endMotor();
 }
 
-//combines allignFront and distanceFront function
-void calibrateFront()
-{
-    allignFront();
-    delay(100);
-    distanceFront();
-    delay(100);
+// Turns robot back to "North" position
+// when robot is facing "South".
+void southToNorth() {
+  delay(15000);
+  turnLeft(90);
+  parallelWall();
+  distanceFront();
+  allignFront();
+  turnRight(90);
+  distanceFront();
+  allignFront();
+  turnRight(90);
 }
 
-//allign against front and side wall
-void calibrateAll()
-{
-    parallelWall();
-    delay(250);
-    turnRight(90);
-    delay(250);
-    allignFront();
-    delay(250);
-    distanceFront();
-    delay(250);
-    turnLeft(90);
-    parallelWall();
+// Turns robot back to "North" position
+// when robot is facing "East".
+void eastToNorth() {
+  delay(15000);
+  parallelWall();
+  distanceFront();
+  allignFront();
+  turnRight(90);
+  distanceFront();
+  allignFront();
+  turnRight(90);
 }
 
-//send sensor data
-void sendSensor(){
-  //delay(1000);
+// Split fast actions string into separate actions.
+void splitStringToAction(String com) {
+  int j = 0;
+  for (int i = 0; i < com.length(); i++) {
+    if (com.charAt(i) == ',') {
+      command = com.substring(j, i);
+      j = i + 1;
+      doFastAction(command);
+      delay(500);
+    }
+  }
+
+  command = com.substring(j, com.length());
+  doFastAction(command);
+}
+
+void doFastAction(String com) {
+  if (com.charAt(0) == 'w') {
+    int moveDistance = com.substring(1).toInt();
+    if (moveDistance > 0 && moveDistance <= 15) {
+      goForwardFast(moveDistance * 10);
+    }
+  }
+
+  else if (com.charAt(0) == 's') {
+    int moveDistance = com.substring(1).toInt();
+    if (moveDistance > 0 && moveDistance <= 15) {
+      goBackwardFast(moveDistance * 10);
+    }
+  }
+
+  else if (com.charAt(0) == 'a') {
+    if (com.charAt(1) == '1')
+      turnLeft(90);
+
+    else if (com.charAt(1) == '2')
+      turnLeft(180);
+  }
+
+  else if (com.charAt(0) == 'd') {
+    if (com.charAt(1) == '1')
+      turnRight(90);
+
+    else if (com.charAt(1) == '2')
+      turnRight(180);
+  }
+}
+
+// combines allignFront and distanceFront function
+void calibrateFront() {
+  allignFront();
+  delay(100);
+  distanceFront();
+  delay(100);
+}
+
+// allign against front and side wall
+void calibrateAll() {
+  parallelWall();
+  delay(250);
+  turnRight(90);
+  delay(250);
+  allignFront();
+  delay(250);
+  distanceFront();
+  delay(250);
+  turnLeft(90);
+  parallelWall();
+}
+
+// send sensor data
+void sendSensor() {
+  // delay(1000);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"SD\",\"fr\":";
   toSend.concat(getFrontRight());
-  
+
   toSend.concat(",\"fl\":");
   toSend.concat(getFrontLeft());
-  
+
   toSend.concat(",\"fm\":");
   toSend.concat(getFrontMiddle());
-  
+
   toSend.concat(",\"left\":");
   toSend.concat(getLeft());
-  //toSend.concat("-1");
-  
+  // toSend.concat("-1");
+
   toSend.concat(",\"rf\":");
   toSend.concat(getRightFront());
-  //toSend.concat("-1");
-  
+  // toSend.concat("-1");
+
   toSend.concat(",\"rb\":");
   toSend.concat(getRightBack());
-  //toSend.concat("-1");
+  // toSend.concat("-1");
   toSend.concat("}");
 
   Serial.println(toSend);
   Serial.flush();
 }
 
-void sendFin()
-{
+void sendFin() {
   toSend = ";{\"from\":\"Arduino\",\"com\":\"C\"}";
-  
+
   Serial.println(toSend);
   Serial.flush();
 }
