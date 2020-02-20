@@ -15,16 +15,45 @@ ZSharpIR sr5c(s5, SRmodel);
 // long IR sensor
 ZSharpIR sr3c = ZSharpIR(s3, LRmodel);
 
-// return distance from sensors (cm)
+// return distance from sensors (grids)
 int getDistance(ZSharpIR& sensor) {
   int dist = sensor.distance();
   bool isLongRange = sensor.getIrPin() == s3;
   if ((isLongRange && dist > LR_MAX) || (!isLongRange && dist > SR_MAX))
     return -1;
+
+  //offset distance
+  switch(sensor.getIrPin()){
+    case 's0': //fr
+      dist -= 0;
+      break;
+    
+    case 's1': //fm
+      dist -= 0;
+      break;
+
+    case 's2': //fl
+      dist -= 0;
+      break;
+
+    case 's3': //l
+      dist -= 0;
+      break;
+
+    case 's4': //rb
+      dist -= 0;
+      break;
+
+    case 's5': //rf
+      dist -= 0;
+      break;
+  }
+
   dist = dist / 10;
-  return isLongRange ? dist : dist + 1;
+  return isLongRange ? dist : dist;
 }
 
+// return distance from sensors (cm)
 int getDistanceRaw(ZSharpIR& sensor) { return sensor.distance(); }
 }  // namespace
 

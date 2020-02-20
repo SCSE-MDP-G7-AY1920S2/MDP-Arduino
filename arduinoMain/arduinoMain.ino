@@ -108,16 +108,9 @@ void parallelWall() {
   startMotor();
 
   while (trial < MAX_CALIBRATION_TRIAL && abs(diff) > 0.5) {
-    if (rf < rb) {  // facing right
-      setRightSpeed(100);
-      setLeftSpeed(00);
-    } else if (rb < rf) {  // facing left
-      setLeftSpeed(100);
-      setRightSpeed(0);
-    }
-    delay(50);
-    setLeftSpeed(0);
-    setRightSpeed(0);
+    if (rf < rb) turnLeft(1);
+    
+    else if (rb < rf) turnRight(1);
 
     rf = getRightFrontRaw();
     rb = getRightBackRaw();
@@ -138,20 +131,9 @@ void allignFront() {
   startMotor();
 
   while (trial < MAX_CALIBRATION_TRIAL && abs(diff) != 0) {
-    Serial.print(getFrontLeftRaw());
-    Serial.print(", ");
-    Serial.print(getFrontRightRaw());
-    Serial.print("\n");
-    if (fl > fr) {  // facing right
-      setRightSpeed(0);
-      setLeftSpeed(100);
-    } else if (fr > fl) {  // facing left
-      setRightSpeed(100);
-      setLeftSpeed(0);
-    }
-    delay(50);
-    setRightSpeed(0);
-    setLeftSpeed(0);
+    if (fl > fr) turnRight(1);
+    
+    else if (fr > fl)turnLeft(1);
 
     fr = getFrontRightRaw();
     fl = getFrontLeftRaw();
@@ -164,13 +146,16 @@ void allignFront() {
 
 // align robot to the wall (distance)
 void distanceFront() {
-  int count = 0;
+  int trial = 0;
+  int dist = 10;
   startMotor();
-  while (getFrontMiddleRaw() != 10 && count < 20) {
-    if (getFrontRightRaw() < 10) goBackwardTicks(1);
 
-    if (getFrontRightRaw() > 10) goForwardTicks(1);
-    count++;
+  while (trial < MAX_CALIBRATION_TRIAL && getFrontMiddleRaw() != dist) {
+    if (getFrontRightRaw() < dist) goBackwardTicks(1);
+
+    if (getFrontRightRaw() > dist) goForwardTicks(1);
+    
+    trial++;
   }
   endMotor();
 }
