@@ -11,7 +11,7 @@ void setup() {
   startEncoder();
   setupPID();
   setupSensorsCalibration();
-  calibrateAll();
+  parallelWall();
 }
 
 void loop() {
