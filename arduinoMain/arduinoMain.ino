@@ -25,7 +25,8 @@ void loop() {
   //Serial.print("\n");
   //delay(1000);
 
-  calibrateAll();
+  
+  parallelWall();
   Serial.println("Done");
   delay(5000);
 
@@ -125,22 +126,22 @@ void loop() {
 void parallelWall(){
   DualVNH5019MotorShield md;
 
-  int rf = getRightFrontRaw();
-  int rb = getRightBackRaw();
-  int diff = rf-rb;
+  double rf = getRightFrontRaw();
+  double rb = getRightBackRaw()+0.5;
+  double diff = rf-rb;
   startMotor();
 
   while(abs(diff) != 0){
     if(rf < rb){ //facing right
-      //turnLeft(1);
-      turnLeft(1);
-    }
-    else if(rb < rf){ //facing left
-      //turnRight(1);
+      
       turnRight(1);
     }
+    else if(rb < rf){ //facing left
+      
+      turnLeft(1);
+    }
     rf = getRightFrontRaw();
-    rb = getRightBackRaw();
+    rb = getRightBackRaw()+0.5;
     diff = rf-rb;
   }
   endMotor();

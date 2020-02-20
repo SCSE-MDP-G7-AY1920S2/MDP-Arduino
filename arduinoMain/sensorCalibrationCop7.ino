@@ -104,7 +104,7 @@ int getRightBack(){
 
 int getRightBackRaw(){
   ZSharpIR sr4(s4, SRmodel);
-  return getDistanceRaw(sr4, sr4c)+1;
+  return getDistanceRaw(sr4, sr4c);
 }
 
 int getRightFront(){
