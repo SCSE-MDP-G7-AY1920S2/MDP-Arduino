@@ -1,5 +1,5 @@
 #include <ZSharpIR.h>
-#include <DualVNH5019MotorShield.h>
+
 #include "mdp_motor.h"
 
 String toSend = "";
@@ -123,8 +123,6 @@ void loop() {
 
 //aligns the robot against the wall
 void parallelWall(){
-  DualVNH5019MotorShield md;
-
   int rf = getRightFrontRaw();
   int rb = getRightBackRaw();
   int diff = rf-rb;
@@ -148,7 +146,6 @@ void parallelWall(){
 
 //align robot to the front (angle)
 void allignFront(){
-  DualVNH5019MotorShield md;
 
   int fr = getFrontRightRaw();
   int fl = getFrontLeftRaw();
