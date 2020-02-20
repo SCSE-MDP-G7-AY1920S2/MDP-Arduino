@@ -1,6 +1,6 @@
 #include <ZSharpIR.h>
 #include <DualVNH5019MotorShield.h>
-#include <mdp_motor.h>
+#include "mdp_motor.h"
 
 String toSend = "";
 String command = "";
@@ -25,7 +25,7 @@ void loop() {
   //Serial.print("\n");
   //delay(1000);
 
-  calibrateFront();
+  calibrateAll();
   Serial.println("Done");
   delay(5000);
 
@@ -133,11 +133,11 @@ void parallelWall(){
   while(abs(diff) != 0){
     if(rf < rb){ //facing right
       //turnLeft(1);
-      md.setM1Speed(150);
+      turnLeft(1);
     }
     else if(rb < rf){ //facing left
       //turnRight(1);
-      md.setM2Speed(150);
+      turnRight(1);
     }
     rf = getRightFrontRaw();
     rb = getRightBackRaw();
@@ -159,10 +159,10 @@ void allignFront(){
   while(abs(diff) != 0){
 
     if(fl > fr){ //facing right
-      md.setM1Speed(150);
+      turnLeft(1);
     }
     else if(fr > fl){ //facing left
-      md.setM2Speed(150);
+      turnRight(1);
     }
 
     fr = getFrontRightRaw();

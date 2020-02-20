@@ -67,14 +67,29 @@ int getFrontRight(){
   return getDistance(sr0, sr0c);
 }
 
+int getFrontRightRaw(){
+  ZSharpIR sr0(s0, SRmodel);
+  return getDistanceRaw(sr0, sr0c);
+}
+
 int getFrontMiddle(){
   ZSharpIR sr1(s1, SRmodel);
   return getDistance(sr1, sr1c);
 }
 
+int getFrontMiddleRaw(){
+  ZSharpIR sr1(s1, SRmodel);
+  return getDistanceRaw(sr1, sr1c);
+}
+
 int getFrontLeft(){
   ZSharpIR sr2(s2, SRmodel);
   return getDistance(sr2, sr2c);
+}
+
+int getFrontLeftRaw(){
+  ZSharpIR sr2(s2, SRmodel);
+  return getDistanceRaw(sr2, sr2c);
 }
 
 int getLeft(){
@@ -87,9 +102,19 @@ int getRightBack(){
   return getDistance(sr4, sr4c);
 }
 
+int getRightBackRaw(){
+  ZSharpIR sr4(s4, SRmodel);
+  return getDistanceRaw(sr4, sr4c)+1;
+}
+
 int getRightFront(){
   ZSharpIR sr5(s5, SRmodel);
   return getDistance(sr5, sr5c);
+}
+
+int getRightFrontRaw(){
+  ZSharpIR sr5(s5, SRmodel);
+  return getDistanceRaw(sr5, sr5c);
 }
 
 //return distance from sensors (cm)
@@ -125,7 +150,36 @@ int getDistance(ZSharpIR sensor, ZSharpIR sensorc){
   if(sr==false){
     return dist;
   }
+  if(sensorc.getIrPin() == sr4c.getIrPin()){
+    return (dist+1)/10 + 1;
+  }
   return dist+1;
+}
+
+int getDistanceRaw(ZSharpIR sensor, ZSharpIR sensorc){
+  int dist;
+  //multipler to set ratio for calibrated and non-calibrated value
+  double multipler = 1;
+  int lrMax = 60;
+  int srMax = 30;
+  boolean sr = true;
+  if(sensor.getMax() != 800){
+    sr = false;
+  }
+  dist = sensorc.distance();
+
+  //if reading above/ below a certain range
+  if(sr==false && dist > lrMax){
+    dist = sensor.distance()/10;
+  }
+  else if(sr==true && dist > srMax){
+    dist = sensor.distance()/10;
+  }
+  else{
+    dist = multipler*dist + (1-multipler)*(sensor.distance()/10);
+  }
+
+  return dist;
 }
 
 //calibrate sensors
