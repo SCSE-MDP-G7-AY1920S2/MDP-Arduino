@@ -12,7 +12,7 @@ void setup() {
   startEncoder();
   setupPID();
   setupSensorsCalibration();
-  allignFront();
+  calibrateAll();
 }
 
 void loop() {
@@ -135,6 +135,10 @@ void parallelWall(){
       setLeftSpeed(0);
       setRightSpeed(100);
     }
+    delay(50);
+    setLeftSpeed(0);
+    setRightSpeed(0);
+
     rf = getRightFrontRaw();
     rb = getRightBackRaw()+0.4;
     diff = rf-rb;
@@ -164,6 +168,9 @@ void allignFront(){
       setRightSpeed(100);
       setLeftSpeed(0);
     }
+    delay(50);
+    setRightSpeed(0);
+    setLeftSpeed(0);
 
     fr = getFrontRightRaw();
     fl = getFrontLeftRaw();
@@ -177,12 +184,12 @@ void distanceFront()
 {
   int count = 0;
   startMotor();
-  while (getFrontMiddleRaw() != 8 && count < 20)
+  while (getFrontMiddleRaw() != 7 && count < 20)
   {
-    if (getFrontRightRaw() < 8)
+    if (getFrontRightRaw() < 7)
       goBackwardTicks(1);
 
-    if (getFrontRightRaw() > 8)
+    if (getFrontRightRaw() > 7)
       goForwardTicks(1);
     count++;
   }
