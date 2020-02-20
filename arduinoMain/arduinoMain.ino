@@ -4,6 +4,8 @@
 String toSend = "";
 String command = "";
 
+const int MAX_CALIBRATION_TRIAL = 20;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -102,9 +104,10 @@ void parallelWall() {
   double rf = getRightFrontRaw();
   double rb = getRightBackRaw();
   double diff = rf - rb;
+  int trial = 0;
   startMotor();
 
-  while (abs(diff) > 0.5) {
+  while (trial < MAX_CALIBRATION_TRIAL && abs(diff) > 0.5) {
     if (rf < rb) {  // facing right
       setRightSpeed(0);
       setLeftSpeed(100);
@@ -119,6 +122,8 @@ void parallelWall() {
     rf = getRightFrontRaw();
     rb = getRightBackRaw();
     diff = rf - rb;
+
+    trial++;
   }
   endMotor();
 }
@@ -128,10 +133,11 @@ void allignFront() {
   int fr = getFrontRightRaw();
   int fl = getFrontLeftRaw();
   int diff = fr - fl;
+  int trial = 0;
 
   startMotor();
 
-  while (abs(diff) != 0) {
+  while (trial < MAX_CALIBRATION_TRIAL && abs(diff) != 0) {
     Serial.print(getFrontLeftRaw());
     Serial.print(", ");
     Serial.print(getFrontRightRaw());
@@ -150,6 +156,8 @@ void allignFront() {
     fr = getFrontRightRaw();
     fl = getFrontLeftRaw();
     diff = fr - fl;
+
+    trial++;
   }
   endMotor();
 }
