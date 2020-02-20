@@ -24,7 +24,7 @@ void loop() {
   Serial.print(getRightFront());
   Serial.print("\n");
   */
- 
+
   String message = "";
   String com = "";
   if (Serial.available() > 0) {

@@ -17,7 +17,6 @@
 #define SR_MAX 30
 #define LR_MAX 60
 
-
 int getFrontLeft();
 int getFrontLeftRaw();
 int getFrontMiddle();
