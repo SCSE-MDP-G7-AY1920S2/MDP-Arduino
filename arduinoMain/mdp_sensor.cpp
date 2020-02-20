@@ -78,7 +78,7 @@ int getFrontLeftRaw(){
 }
 
 int getLeft(){
-  return getDistance(sr3c)-1;
+  return getDistance(sr3c);
 }
 
 int getRightBack(){

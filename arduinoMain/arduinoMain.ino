@@ -109,11 +109,11 @@ void parallelWall() {
 
   while (trial < MAX_CALIBRATION_TRIAL && abs(diff) > 0.5) {
     if (rf < rb) {  // facing right
-      setRightSpeed(0);
-      setLeftSpeed(100);
-    } else if (rb < rf) {  // facing left
-      setLeftSpeed(0);
       setRightSpeed(100);
+      setLeftSpeed(00);
+    } else if (rb < rf) {  // facing left
+      setLeftSpeed(100);
+      setRightSpeed(0);
     }
     delay(50);
     setLeftSpeed(0);
@@ -166,10 +166,10 @@ void allignFront() {
 void distanceFront() {
   int count = 0;
   startMotor();
-  while (getFrontMiddleRaw() != 7 && count < 20) {
-    if (getFrontRightRaw() < 7) goBackwardTicks(1);
+  while (getFrontMiddleRaw() != 10 && count < 20) {
+    if (getFrontRightRaw() < 10) goBackwardTicks(1);
 
-    if (getFrontRightRaw() > 7) goForwardTicks(1);
+    if (getFrontRightRaw() > 10) goForwardTicks(1);
     count++;
   }
   endMotor();
