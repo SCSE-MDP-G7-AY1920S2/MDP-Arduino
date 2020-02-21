@@ -9,7 +9,6 @@ const int MAX_CALIBRATION_TRIAL = 20;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  Serial.setTimeout(50);
   startEncoder();
   setupPID();
   setupSensorsCalibration();
@@ -28,6 +27,7 @@ void loop() {
   delay(1000);
   */
 
+  Serial.setTimeout(50);
   String message = "";
   String com = "";
   if (Serial.available() > 0) {
@@ -98,8 +98,6 @@ void loop() {
         break;
     }
   }
-
-  Serial.flush();
 }
 
 // aligns the robot against the wall
