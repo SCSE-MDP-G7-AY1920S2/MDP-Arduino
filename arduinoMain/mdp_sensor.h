@@ -24,6 +24,7 @@ int getFrontMiddleRaw();
 int getFrontRight();
 int getFrontRightRaw();
 int getLeft();
+int getLeftRaw();
 int getRightBack();
 int getRightBackRaw();
 int getRightFront();

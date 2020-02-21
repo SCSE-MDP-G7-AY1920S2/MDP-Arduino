@@ -24,32 +24,32 @@ int getDistance(ZSharpIR& sensor) {
 
   //offset distance
   switch(sensor.getIrPin()){
-    case 's0': //fr
-      dist -= 0;
+    case s0: //fr
+      dist -= 7;
       break;
     
-    case 's1': //fm
-      dist -= 0;
+    case s1: //fm
+      dist -= 7;
       break;
 
-    case 's2': //fl
-      dist -= 0;
+    case s2: //fl
+      dist -= 7;
       break;
 
-    case 's3': //l
-      dist -= 0;
+    case s3: //l
+      dist -= 15;
       break;
 
-    case 's4': //rb
-      dist -= 0;
+    case s4: //rb
+      dist -= 8;
       break;
 
-    case 's5': //rf
-      dist -= 0;
+    case s5: //rf
+      dist -= 8;
       break;
   }
 
-  dist = dist / 10;
+  dist = (dist / 10) + 1;
   return isLongRange ? dist : dist;
 }
 
@@ -58,12 +58,9 @@ int getDistanceRaw(ZSharpIR& sensor) { return sensor.distance(); }
 }  // namespace
 
 void setupSensorsCalibration() {
-  int tablesr0c[] = {3,   623, 437, 313, 249, 176, 160, 140, 130, 129,
-                     117, 86,  70,  50,  38,  30,  20,  15,  10,  0};
-  int tablesr1c[] = {3,  619, 431, 308, 250, 200, 180, 165, 139, 119,
-                     53, 56,  84,  89,  25,  21,  60,  80,  48,  0};
-  int tablesr2c[] = {3,  621, 410, 295, 230, 190, 168, 145, 122, 118,
-                     95, 82,  91,  95,  78,  59,  55,  54,  71,  0};
+  int tablesr0c[] = {4, 673, 484, 344, 281, 223, 190, 143, 139, 106, 96, 85, 75, 57, 42, 49, 41, 32, 27, 0};
+  int tablesr1c[] = {2, 663, 489, 341, 268, 227, 197, 163, 145, 129, 114, 102, 90, 73, 70, 61, 53, 38, 35, 0};
+  int tablesr2c[] = {4, 664, 481, 325, 254, 206, 191, 167, 127, 122, 107, 83, 67, 92, 70, 65, 59, 47, 40, 0};
 
   int tablesr3c[] = {2,   275, 486, 528, 482, 433, 382, 335, 293, 258,
                      235, 217, 197, 182, 170, 156, 148, 139, 139, 0};
@@ -94,6 +91,8 @@ int getFrontLeft() { return getDistance(sr2c); }
 int getFrontLeftRaw() { return getDistanceRaw(sr2c); }
 
 int getLeft() { return getDistance(sr3c); }
+
+int getLeftRaw() { return getDistanceRaw(sr3c); }
 
 int getRightBack() { return getDistance(sr4c); }
 

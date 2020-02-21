@@ -19,10 +19,13 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   /*
-  Serial.print(getRightFront());
+  Serial.print(getFrontLeft());
   Serial.print(", ");
-  Serial.print(getRightFront());
+  Serial.print(getFrontMiddle());
+  Serial.print(", ");
+  Serial.print(getFrontRight());
   Serial.print("\n");
+  delay(1000);
   */
 
   String message = "";
@@ -147,7 +150,7 @@ void allignFront() {
 // align robot to the wall (distance)
 void distanceFront() {
   int trial = 0;
-  int dist = 10;
+  int dist = 7;
   startMotor();
 
   while (trial < MAX_CALIBRATION_TRIAL && getFrontMiddleRaw() != dist) {
