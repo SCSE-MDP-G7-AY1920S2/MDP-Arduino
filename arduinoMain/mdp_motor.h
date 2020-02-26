@@ -24,7 +24,7 @@ const int TURN_TICKS_L_45 = 180;
 const int TURN_TICKS_L_10 = 28;
 const int TURN_TICKS_L_1 = 4;
 
-const int TURN_TICKS_R_90 = 395;
+const int TURN_TICKS_R_90 = 392;
 const int TURN_TICKS_R_45 = 186;
 const int TURN_TICKS_R_10 = 28;
 const int TURN_TICKS_R_1 = 4;
