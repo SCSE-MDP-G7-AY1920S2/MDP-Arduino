@@ -12,6 +12,7 @@ DualVNH5019MotorShield md;
 // PID setup.
 const unsigned SampleTime = 5;
 unsigned long lastTime = millis();
+int moveCount = 0;
 FastPID ShortTurnPID(/*kp=*/12.3, /*ki=*/6.1, /*kd=*/0.0036,
                      /*hz=*/200, /*bits=*/16, /*sign=*/true);
 
@@ -24,7 +25,6 @@ void _incLeftMotorTicks() { leftTick++; }
 void _incRightMotorTicks() { rightTick++; }
 
 void _setTicks() {
-  ShortTurnPID.clear();
   rightTick = 0;
   leftTick = 0;
 }
@@ -32,6 +32,10 @@ void _setTicks() {
 // Move forward for the number of totalTicks. Start slow and gradually increase
 // speed until baseSpeed, and reduce speed when approaching totalTicks.
 void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
+  if (moveCount >= MAX_MOVE_PID_RESET) {
+    moveCount = 0;
+    pid.clear();
+  }
   _setTicks();
   startMotor();
   int currentSpeed = baseSpeed;
@@ -61,6 +65,7 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
     }
   }
   endMotor();
+  moveCount++;
 }
 
 void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid,

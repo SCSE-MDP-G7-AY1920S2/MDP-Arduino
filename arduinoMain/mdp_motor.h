@@ -5,6 +5,9 @@
 const int LEFT_PULSE = 11;
 const int RIGHT_PULSE = 3;
 
+// Move count threshold for resetting PID.
+const int MAX_MOVE_PID_RESET = 5;
+
 // Speed config.
 const int MOVE_FAST_SPEED = 380;
 const int MOVE_SLOW_SPEED = 300;  // 310
