@@ -14,8 +14,14 @@
 #define s5 A5  // right top
 
 // Maximum distance available.
-#define SR_MAX 30
+#define SR_MAX 20
+#define SR_MIN 10
+
+#define FRONT_MAX 18
+#define FRONT_MIN 8
+
 #define LR_MAX 60
+#define LR_MIN 20
 
 int getFrontLeft();
 int getFrontLeftRaw();
