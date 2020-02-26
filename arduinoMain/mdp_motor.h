@@ -14,7 +14,7 @@ const int TURN_NORMAL_SPEED = 280;
 const int TURN_SLOW_SPEED = 100;
 
 // Ticks lookup table.
-const int TICKS[15] = {297,  596,  890,  1191, 1487, 1790, 2090, 2390,
+const int TICKS[15] = {305,  596,  891,  1191, 1487, 1790, 2090, 2390,
                        2705, 2980, 3275, 3590, 3855, 4130, 4430};
 const int TICKS_FAST[15] = {299,  600,  893,  1188, 1484, 1789, 2085, 2387,
                             2688, 2980, 3275, 3575, 3870, 4173, 4480};
@@ -24,7 +24,7 @@ const int TURN_TICKS_L_45 = 180;
 const int TURN_TICKS_L_10 = 28;
 const int TURN_TICKS_L_1 = 4;
 
-const int TURN_TICKS_R_90 = 391;
+const int TURN_TICKS_R_90 = 395;
 const int TURN_TICKS_R_45 = 186;
 const int TURN_TICKS_R_10 = 28;
 const int TURN_TICKS_R_1 = 4;
