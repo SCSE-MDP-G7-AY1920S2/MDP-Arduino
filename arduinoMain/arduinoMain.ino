@@ -13,20 +13,22 @@ void setup() {
   startEncoder();
   setupPID();
   setupSensorsCalibration();
+  //allignFront();
+  //calibrateSensors();
   calibrateAll();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   /*
-  Serial.print(getFrontLeft());
+  Serial.print(getLeftRaw());
   Serial.print(", ");
-  Serial.print(getFrontMiddle());
-  Serial.print(", ");
-  Serial.print(getFrontRight());
+  Serial.print(getLeft());
+  //Serial.print(", ");
+  //Serial.print(getFrontRight());
   Serial.print("\n");
-  delay(1000);
-  */
+  delay(2000);
+*/
 
   String message = "";
   String com = "";
@@ -112,7 +114,7 @@ void parallelWall() {
 
   while (trial < MAX_CALIBRATION_TRIAL && abs(diff) > 0.5) {
     if (rf < rb) turnLeft(1);
-    
+
     else if (rb < rf) turnRight(1);
 
     rf = getRightFrontRaw();
@@ -135,7 +137,7 @@ void allignFront() {
 
   while (trial < MAX_CALIBRATION_TRIAL && abs(diff) != 0) {
     if (fl > fr) turnRight(1);
-    
+
     else if (fr > fl)turnLeft(1);
 
     fr = getFrontRightRaw();
@@ -154,10 +156,10 @@ void distanceFront() {
   startMotor();
 
   while (trial < MAX_CALIBRATION_TRIAL && getFrontMiddleRaw() != dist) {
-    if (getFrontRightRaw() < dist) goBackwardTicks(1);
+    if (getFrontRightRaw() < dist) goBackwardTicks(5);
 
-    if (getFrontRightRaw() > dist) goForwardTicks(1);
-    
+    if (getFrontRightRaw() > dist) goForwardTicks(5);
+
     trial++;
   }
   endMotor();
@@ -262,7 +264,7 @@ void calibrateAll() {
 
 // send sensor data
 void sendSensor() {
-  // delay(1000);
+  delay(500);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"SD\",\"fr\":";
   toSend.concat(getFrontRight());
 
