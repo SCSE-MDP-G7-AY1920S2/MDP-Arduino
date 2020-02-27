@@ -13,15 +13,21 @@
 #define s4 A4  // right bottom
 #define s5 A5  // right top
 
-// Maximum distance available.
-#define SR_MAX 20
-#define SR_MIN 10
+// Sensor Curve-Fitting Parameters.
+#define P1 5.770230285862897e+03
+#define Q1 3.057232146852901
+#define SR_VMIN 145
+#define LR_VMIN 170
 
-#define FRONT_MAX 18
-#define FRONT_MIN 8
+// Maximum distance for Grid 1 and 2.
+#define FRONT_G2 27
+#define FRONT_G1 17
 
-#define LR_MAX 60
-#define LR_MIN 20
+#define RIGHT_G2 26
+#define RIGHT_G1 16
+
+#define LR_MAX 70
+#define LR_OFFSET 15
 
 int getFrontLeft();
 int getFrontLeftRaw();
