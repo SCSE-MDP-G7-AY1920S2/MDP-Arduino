@@ -5,7 +5,34 @@
 #include <EnableInterrupt.h>
 #include <FastPID.h>
 
+#define LEFT_PULSE 11
+#define RIGHT_PULSE 3
+
 namespace {
+// Speed config.
+const int kMoveFastSpeed = 380;
+const int kMoveSlowSpeed = 320;
+const int kMoveTickSpeed = 100;
+const int kTurnFastSpeed = 300;
+const int kTurnNormalSpeed = 280;
+const int kTurnSlowSpeed = 100;
+
+// Ticks.
+const int kTicks[15] = {310,  596,  891,  1191, 1487, 1790, 2090, 2390,
+                        2705, 2980, 3275, 3590, 3855, 4130, 4430};
+const int kTicksFast[15] = {299,  600,  893,  1188, 1484, 1789, 2085, 2387,
+                            2688, 2980, 3275, 3575, 3870, 4173, 4480};
+
+const int kTurnTicksL90 = 391;
+const int kTurnTicksL45 = 180;
+const int kTurnTicksL10 = 28;
+const int kTurnTicksL1 = 4;
+
+const int kTurnTicksR90 = 391;
+const int kTurnTicksR45 = 186;
+const int kTurnTicksR10 = 28;
+const int kTurnTicksR1 = 4;
+
 // Motor Driver shield.
 DualVNH5019MotorShield md;
 
@@ -150,60 +177,60 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
 }  // namespace
 
 void goForward(int cm) {
-  int totalTicks = _cmToTicks(TICKS, cm);
-  _goForwardRamp(totalTicks, MOVE_SLOW_SPEED, ShortTurnPID);
+  int totalTicks = _cmToTicks(kTicks, cm);
+  _goForwardRamp(totalTicks, kMoveSlowSpeed, ShortTurnPID);
 }
 
 void goForwardFast(int cm) {
-  int totalTicks = _cmToTicks(TICKS_FAST, cm);
-  _goForwardRamp(totalTicks, MOVE_FAST_SPEED, ShortTurnPID);
+  int totalTicks = _cmToTicks(kTicksFast, cm);
+  _goForwardRamp(totalTicks, kMoveFastSpeed, ShortTurnPID);
 }
 
 void goForwardTicks(int ticks) {
-  _goForwardTicks(ticks, MOVE_TICK_SPEED, ShortTurnPID);
+  _goForwardTicks(ticks, kMoveTickSpeed, ShortTurnPID);
 }
 
 void goBackward(int cm) {
-  int totalTicks = _cmToTicks(TICKS, cm);
-  _goForwardTicks(totalTicks, MOVE_SLOW_SPEED, ShortTurnPID, /*reverse=*/true);
+  int totalTicks = _cmToTicks(kTicks, cm);
+  _goForwardTicks(totalTicks, kMoveSlowSpeed, ShortTurnPID, /*reverse=*/true);
 }
 
 void goBackwardFast(int cm) {
-  int totalTicks = _cmToTicks(TICKS_FAST, cm);
-  _goForwardTicks(totalTicks, MOVE_FAST_SPEED, ShortTurnPID, /*reverse=*/true);
+  int totalTicks = _cmToTicks(kTicksFast, cm);
+  _goForwardTicks(totalTicks, kMoveFastSpeed, ShortTurnPID, /*reverse=*/true);
 }
 
 void goBackwardTicks(int ticks) {
-  _goForwardTicks(ticks, MOVE_TICK_SPEED, ShortTurnPID, /*reverse=*/true);
+  _goForwardTicks(ticks, kMoveTickSpeed, ShortTurnPID, /*reverse=*/true);
 }
 
 void turnLeft(int angle) {
   if (angle >= 90 && angle % 90 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/90, TURN_TICKS_L_90, TURN_FAST_SPEED,
+    _turnLeftTicks(angle, /*stepSize=*/90, kTurnTicksL90, kTurnFastSpeed,
                    ShortTurnPID);
   else if (angle % 45 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/45, TURN_TICKS_L_45, TURN_NORMAL_SPEED,
+    _turnLeftTicks(angle, /*stepSize=*/45, kTurnTicksL45, kTurnNormalSpeed,
                    ShortTurnPID);
   else if (angle % 10 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/10, TURN_TICKS_L_10, TURN_NORMAL_SPEED,
+    _turnLeftTicks(angle, /*stepSize=*/10, kTurnTicksL10, kTurnNormalSpeed,
                    ShortTurnPID);
   else
-    _turnLeftTicks(angle, /*stepSize=*/1, TURN_TICKS_L_1, TURN_SLOW_SPEED,
+    _turnLeftTicks(angle, /*stepSize=*/1, kTurnTicksL1, kTurnSlowSpeed,
                    ShortTurnPID);
 }
 
 void turnRight(int angle) {
   if (angle >= 90 && angle % 90 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/90, TURN_TICKS_R_90, TURN_FAST_SPEED,
+    _turnLeftTicks(angle, /*stepSize=*/90, kTurnTicksR90, kTurnFastSpeed,
                    ShortTurnPID, /*reverse=*/true);
   else if (angle % 45 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/45, TURN_TICKS_R_45, TURN_NORMAL_SPEED,
+    _turnLeftTicks(angle, /*stepSize=*/45, kTurnTicksR45, kTurnNormalSpeed,
                    ShortTurnPID, /*reverse=*/true);
   else if (angle % 10 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/10, TURN_TICKS_R_10, TURN_NORMAL_SPEED,
+    _turnLeftTicks(angle, /*stepSize=*/10, kTurnTicksR10, kTurnNormalSpeed,
                    ShortTurnPID, /*reverse=*/true);
   else
-    _turnLeftTicks(angle, /*stepSize=*/1, TURN_TICKS_R_1, TURN_SLOW_SPEED,
+    _turnLeftTicks(angle, /*stepSize=*/1, kTurnTicksR1, kTurnSlowSpeed,
                    ShortTurnPID, /*reverse=*/true);
 }
 

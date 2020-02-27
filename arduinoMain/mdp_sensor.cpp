@@ -3,7 +3,34 @@
 #include <Arduino.h>
 #include <ZSharpIR.h>
 
+// Model Number for IR sensors.
+#define SRmodel 1080
+#define LRmodel 20150
+
+// Sensor pins.
+#define s0 A0  // front right
+#define s1 A1  // front middle
+#define s2 A2  // front left
+#define s3 A3  // left long range
+#define s4 A4  // right bottom
+#define s5 A5  // right top
+
 namespace {
+// Sensor Curve-Fitting Parameters.
+const double kSRP1 = 5.770230285862897e+03;
+const double kSRQ1 = 3.057232146852901;
+const double kSRVMin = 145;
+const double kLRVMin = 170;
+
+// Maximum distance for Grid 1 and 2.
+const int kFrontBorderGrid1 = 17;
+const int kFrontBorderGrid2 = 27;
+const int kRightBorderGrid1 = 16;
+const int kRightBorderGrid2 = 26;
+
+const int kLRMax = 70;
+const int kLROffset = 15;
+
 // short IR sensor
 // c - calibrated
 ZSharpIR sr0c(s0, SRmodel);
@@ -18,26 +45,26 @@ ZSharpIR sr3c = ZSharpIR(s3, LRmodel);
 // return distance from sensors (grids).
 int getFrontDistance(ZSharpIR& sensor) {
   int dist = sensor.distance();
-  if (dist < FRONT_G1)
+  if (dist < kFrontBorderGrid1)
     return 1;
-  else if (dist < FRONT_G2)
+  else if (dist < kFrontBorderGrid2)
     return 2;
   return -1;
 }
 
 int getRightDistance(ZSharpIR& sensor) {
   int dist = sensor.distance();
-  if (dist < RIGHT_G1)
+  if (dist < kRightBorderGrid1)
     return 1;
-  else if (dist < RIGHT_G2)
+  else if (dist < kRightBorderGrid2)
     return 2;
   return -1;
 }
 
 int getLeftDistance(ZSharpIR& sensor) {
   int dist = sensor.distance();
-  if (dist < LR_MAX) {
-    int grid = (dist - LR_OFFSET) / 10 + 1;
+  if (dist < kLRMax) {
+    int grid = (dist - kLROffset) / 10 + 1;
     return (grid > 0) ? grid : 1;
   }
   return -1;
