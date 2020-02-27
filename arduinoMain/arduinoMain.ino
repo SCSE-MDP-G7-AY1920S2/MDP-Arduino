@@ -12,8 +12,8 @@ void setup() {
   startEncoder();
   setupPID();
   setupSensorsCalibration();
-  //allignFront();
-  //calibrateSensors();
+  // allignFront();
+  // calibrateSensors();
   calibrateStart();
 }
 
@@ -111,9 +111,11 @@ void parallelWall() {
   startMotor();
 
   while (trial < MAX_CALIBRATION_TRIAL && abs(diff) > 0.5) {
-    if (rf < rb) turnLeft(1);
+    if (rf < rb)
+      turnLeft(1);
 
-    else if (rb < rf) turnRight(1);
+    else if (rb < rf)
+      turnRight(1);
 
     rf = getRightFrontRaw();
     rb = getRightBackRaw();
@@ -134,9 +136,11 @@ void allignFront() {
   startMotor();
 
   while (trial < MAX_CALIBRATION_TRIAL && abs(diff) != 0) {
-    if (fl > fr) turnRight(1);
+    if (fl > fr)
+      turnRight(1);
 
-    else if (fr > fl)turnLeft(1);
+    else if (fr > fl)
+      turnLeft(1);
 
     fr = getFrontRightRaw();
     fl = getFrontLeftRaw();
@@ -261,8 +265,8 @@ void calibrateAll() {
   parallelWall();
 }
 
-//allign against side and back wall
-void calibrateStart(){
+// allign against side and back wall
+void calibrateStart() {
   turnRight(90);
   delay(250);
   allignFront();
@@ -278,6 +282,50 @@ void calibrateStart(){
   turnLeft(180);
   delay(250);
   parallelWall();
+}
+
+/* For checklist - need to do sharp/gentle turn
+sharpAvoidance is for 90 degree turn
+tiltAvoidance is for 45 degree turn*/
+void sharpAvoidance() {
+  while (true) {
+    goForward(10);
+    if (getFrontMiddle() == 1) {
+      delay(500);
+      turnLeft(90);
+      goForward(20);
+      delay(500);
+      turnRight(90);
+      delay(500);
+      goForward(50);
+      turnRight(90);
+      delay(500);
+      goForward(20);
+      delay(500);
+      turnLeft(90);
+    }
+  }
+}
+
+void tiltAvoidance() {
+  while (true) {
+    goForward(10);
+    if (getFrontMiddle() == 1) {
+      delay(500);
+      turnLeft(45);
+      goForward(20);
+      delay(500);
+      turnRight(45);
+      delay(500);
+      goForward(30);
+      delay(500);
+      turnRight(45);
+      delay(500);
+      goForward(20);
+      delay(500);
+      turnLeft(45);
+    }
+  }
 }
 
 // send sensor data
