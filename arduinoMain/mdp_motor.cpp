@@ -12,8 +12,8 @@ DualVNH5019MotorShield md;
 // PID setup.
 const unsigned SampleTime = 5;
 unsigned long lastTime = millis();
-int moveCount = 0;
-FastPID ShortTurnPID(/*kp=*/12.3, /*ki=*/6.1, /*kd=*/0.0036,
+bool shouldResetPID = false;
+FastPID ShortTurnPID(/*kp=*/17.2, /*ki=*/8.2, /*kd=*/0,
                      /*hz=*/200, /*bits=*/16, /*sign=*/true);
 
 // Interrupt driven tick counts.
@@ -32,9 +32,9 @@ void _setTicks() {
 // Move forward for the number of totalTicks. Start slow and gradually increase
 // speed until baseSpeed, and reduce speed when approaching totalTicks.
 void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
-  if (moveCount >= MAX_MOVE_PID_RESET) {
-    moveCount = 0;
+  if (shouldResetPID) {
     pid.clear();
+    shouldResetPID = false;
   }
   _setTicks();
   startMotor();
@@ -46,12 +46,11 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
     unsigned long now = millis();
     if (totalTicks - rightTick < 150) currentSpeed = 100;
 
-    if ((rightTick - last_tick_R) >= 10 || rightTick == 0 ||
-        rightTick == last_tick_R) {
+    if (offset < 1 && ((rightTick - last_tick_R) >= 10 || rightTick == 0 ||
+                       rightTick == last_tick_R)) {
       last_tick_R = rightTick;
-      offset += 0.1;
+      offset += 0.03;
     }
-
     if (now - lastTime >= SampleTime) {
       // rightTick as setpoint, leftTick as feedback.
       int tickOffset = pid.step(rightTick, leftTick);
@@ -65,11 +64,14 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
     }
   }
   endMotor();
-  moveCount++;
 }
 
 void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid,
                      bool reverse = false) {
+  if (shouldResetPID) {
+    pid.clear();
+    shouldResetPID = false;
+  }
   _setTicks();
   startMotor();
   int currentSpeed = baseSpeed;
@@ -95,6 +97,7 @@ void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid,
 // the number of ticks for the specified stepSize.
 void _turnLeftTicks(int totalAngle, int stepSize, int turnTicks,
                     int currentSpeed, FastPID& pid, bool reverse = false) {
+  shouldResetPID = true;
   for (int i = 0; i < totalAngle; i += stepSize) {
     _setTicks();
     startMotor();
