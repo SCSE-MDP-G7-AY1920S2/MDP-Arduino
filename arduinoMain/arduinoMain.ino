@@ -4,7 +4,7 @@
 String toSend = "";
 String command = "";
 
-const int MAX_CALIBRATION_TRIAL = 20;
+const int MAX_CALIBRATION_TRIAL = 15;
 
 void setup() {
   // put your setup code here, to run once:
@@ -14,20 +14,20 @@ void setup() {
   setupSensorsCalibration();
   //allignFront();
   //calibrateSensors();
-  calibrateAll();
+  calibrateStart();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   /*
-  Serial.print(getLeftRaw());
+  Serial.print(getFrontLeft());
   Serial.print(", ");
-  Serial.print(getLeft());
-  //Serial.print(", ");
-  //Serial.print(getFrontRight());
+  Serial.print(getFrontMiddle());
+  Serial.print(", ");
+  Serial.print(getFrontRight());
   Serial.print("\n");
   delay(2000);
-*/
+  */
 
   Serial.setTimeout(50);
   String message = "";
@@ -257,6 +257,26 @@ void calibrateAll() {
   distanceFront();
   delay(250);
   turnLeft(90);
+  delay(250);
+  parallelWall();
+}
+
+//allign against side and back wall
+void calibrateStart(){
+  turnRight(90);
+  delay(250);
+  allignFront();
+  delay(250);
+  distanceFront();
+  delay(250);
+  turnRight(90);
+  delay(250);
+  allignFront();
+  delay(250);
+  distanceFront();
+  delay(250);
+  turnLeft(180);
+  delay(250);
   parallelWall();
 }
 

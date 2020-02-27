@@ -57,8 +57,8 @@ int getDistance(ZSharpIR& sensor) {
       break;
   }
 
-  dist = (dist / 10) + 1 + 0.5;
-  return isLongRange ? dist : dist;
+  double grid = (dist / 10.0) + 1 + 0.5;
+  return (int) grid;
 }
 
 // return distance from sensors (cm)
