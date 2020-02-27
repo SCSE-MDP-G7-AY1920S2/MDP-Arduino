@@ -4,7 +4,7 @@
 String toSend = "";
 String command = "";
 
-const int MAX_CALIBRATION_TRIAL = 15;
+const int kMaxCalibrationTrial = 7;
 
 void setup() {
   // put your setup code here, to run once:
@@ -110,7 +110,7 @@ void parallelWall() {
   int trial = 0;
   startMotor();
 
-  while (trial < MAX_CALIBRATION_TRIAL && abs(diff) > 0.5) {
+  while (trial < kMaxCalibrationTrial && abs(diff) > 0.5) {
     if (rf < rb)
       turnLeft(1);
 
@@ -135,7 +135,7 @@ void allignFront() {
 
   startMotor();
 
-  while (trial < MAX_CALIBRATION_TRIAL && abs(diff) != 0) {
+  while (trial < kMaxCalibrationTrial && abs(diff) != 0) {
     if (fl > fr)
       turnRight(1);
 
@@ -157,7 +157,7 @@ void distanceFront() {
   int dist = 7;
   startMotor();
 
-  while (trial < MAX_CALIBRATION_TRIAL && getFrontMiddleRaw() != dist) {
+  while (trial < kMaxCalibrationTrial && getFrontMiddleRaw() != dist) {
     if (getFrontRightRaw() < dist) goBackwardTicks(5);
 
     if (getFrontRightRaw() > dist) goForwardTicks(5);
