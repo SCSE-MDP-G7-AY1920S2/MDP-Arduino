@@ -19,15 +19,21 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  /*
-  Serial.print(getFrontLeft());
+  
+  Serial.print(getFrontLeftRaw());
   Serial.print(", ");
-  Serial.print(getFrontMiddle());
+  Serial.print(getFrontMiddleRaw());
   Serial.print(", ");
-  Serial.print(getFrontRight());
+  Serial.print(getFrontRightRaw());
   Serial.print("\n");
-  delay(2000);
-  */
+  
+  Serial.print(getLeftRaw());
+  Serial.print("\n");
+  Serial.print(getRightFrontRaw());
+  Serial.print(", ");
+  Serial.print(getRightBack());
+  Serial.print("\n");
+  delay(5000);
 
   Serial.setTimeout(50);
   String message = "";
