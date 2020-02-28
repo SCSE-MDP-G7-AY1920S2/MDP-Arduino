@@ -4,11 +4,12 @@
 String toSend = "";
 String command = "";
 
-const int kMaxCalibrationTrial = 8;
+const int kMaxCalibrationTrial = 10;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  Serial.setTimeout(50);
   startEncoder();
   setupPID();
   setupSensorsCalibration();
@@ -19,7 +20,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.setTimeout(50);
   String message = "";
   String com = "";
   if (Serial.available() > 0) {
@@ -94,20 +94,21 @@ void loop() {
 
 // aligns the robot against the wall
 void parallelWall() {
-  double rf = getRightFrontRaw();
-  double rb = getRightBackRaw();
-  double diff = rf - rb;
+  // Right front further to obstacle by 1
+  int rf = getRightFrontRaw() + 1;
+  int rb = getRightBackRaw();
+  int diff = rf - rb;
   int trial = 0;
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && abs(diff) > 0.5) {
+  while (trial < kMaxCalibrationTrial && abs(diff) > 0) {
     if (rf < rb)
       turnLeft(1);
 
     else if (rb < rf)
       turnRight(1);
 
-    rf = getRightFrontRaw();
+    rf = getRightFrontRaw() + 1;
     rb = getRightBackRaw();
     diff = rf - rb;
 
@@ -320,7 +321,7 @@ void tiltAvoidance() {
 
 // send sensor data
 void sendSensor() {
-  delay(500);
+  delay(50);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"SD\",\"fr\":";
   toSend.concat(getFrontRight());
 
