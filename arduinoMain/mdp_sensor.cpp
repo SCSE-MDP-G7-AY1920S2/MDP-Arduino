@@ -26,7 +26,8 @@ const double kLRVMin = 170;
 const int kFrontBorderGrid1 = 17;
 const int kFrontBorderGrid2 = 27;
 const int kRightBorderGrid1 = 16;
-const int kRightBorderGrid2 = 26;
+const int kRightFrontBorderGrid2 = 26;
+const int kRightBackBorderGrid2 = 23;
 
 const int kLRMax = 64;
 const int kLROffset = 16;
@@ -57,8 +58,8 @@ int getRightDistance(ZSharpIR& sensor) {
   bool isRightBack = sensor.getIrPin() == s4;
   if (dist < kRightBorderGrid1)
     return 1;
-  else if ((!isRightBack && dist < kRightBorderGrid2)
-          || (isRightBack && dist < 24))
+  else if ((!isRightBack && dist < kRightFrontBorderGrid2)
+          || (isRightBack && dist < kRightBackBorderGrid2))
     return 2;
   return -1;
 }
@@ -125,10 +126,17 @@ int getRightFront() { return getRightDistance(sr5c); }
 int getRightFrontRaw() { return getDistanceRaw(sr5c); }
 
 void calibrateRaw() {
-  Serial.print(getLeft());
+  Serial.print("rf:");
+  Serial.print(getRightFront());
+  Serial.print(" rb:");
+  Serial.print(getRightBack());
   Serial.print("\n");
 
-  Serial.print(getLeftRaw());
+  Serial.print("rf:");
+  Serial.print(getRightFrontRaw());
+  Serial.print(" rb:");
+  Serial.print(getRightBackRaw());
+  Serial.print("\n");
   Serial.print("\n");
   Serial.print("\n");
   delay(1500);

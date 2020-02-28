@@ -23,15 +23,15 @@ const int kTicks[15] = {305,  596,  891,  1191, 1487, 1790, 2090, 2390,
 const int kTicksFast[15] = {299,  600,  893,  1188, 1484, 1789, 2085, 2387,
                             2688, 2980, 3275, 3575, 3870, 4173, 4480};
 
-const int kTurnTicksL90 = 390;
+const int kTurnTicksL90 = 382;
 const int kTurnTicksL45 = 180;
 const int kTurnTicksL10 = 28;
-const int kTurnTicksL1 = 4;
+const int kTurnTicksL1 = 2;
 
-const int kTurnTicksR90 = 388;
+const int kTurnTicksR90 = 381;
 const int kTurnTicksR45 = 186;
 const int kTurnTicksR10 = 28;
-const int kTurnTicksR1 = 4;
+const int kTurnTicksR1 = 2;
 
 // Motor Driver shield.
 DualVNH5019MotorShield md;
@@ -125,6 +125,7 @@ void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid,
 // the number of ticks for the specified stepSize.
 void _turnLeftTicks(int totalAngle, int stepSize, int turnTicks,
                     int currentSpeed, FastPID& pid, bool reverse = false) {
+  pid.clear();
   shouldResetPID = true;
   for (int i = 0; i < totalAngle; i += stepSize) {
     _setTicks();
