@@ -4,7 +4,7 @@
 String toSend = "";
 String command = "";
 
-const int kMaxCalibrationTrial = 7;
+const int kMaxCalibrationTrial = 8;
 
 void setup() {
   // put your setup code here, to run once:
@@ -19,16 +19,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  /*
-  Serial.print(getFrontLeft());
-  Serial.print(", ");
-  Serial.print(getFrontMiddle());
-  Serial.print(", ");
-  Serial.print(getFrontRight());
-  Serial.print("\n");
-  delay(2000);
-  */
-
   Serial.setTimeout(50);
   String message = "";
   String com = "";
@@ -154,7 +144,7 @@ void allignFront() {
 // align robot to the wall (distance)
 void distanceFront() {
   int trial = 0;
-  int dist = 7;
+  int dist = 12;
   startMotor();
 
   while (trial < kMaxCalibrationTrial && getFrontMiddleRaw() != dist) {

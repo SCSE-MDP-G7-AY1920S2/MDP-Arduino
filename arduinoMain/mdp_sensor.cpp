@@ -28,8 +28,8 @@ const int kFrontBorderGrid2 = 27;
 const int kRightBorderGrid1 = 16;
 const int kRightBorderGrid2 = 26;
 
-const int kLRMax = 70;
-const int kLROffset = 15;
+const int kLRMax = 64;
+const int kLROffset = 16;
 
 // short IR sensor
 // c - calibrated
@@ -54,9 +54,11 @@ int getFrontDistance(ZSharpIR& sensor) {
 
 int getRightDistance(ZSharpIR& sensor) {
   int dist = sensor.distance();
+  bool isRightBack = sensor.getIrPin() == s4;
   if (dist < kRightBorderGrid1)
     return 1;
-  else if (dist < kRightBorderGrid2)
+  else if ((!isRightBack && dist < kRightBorderGrid2)
+          || (isRightBack && dist < 24))
     return 2;
   return -1;
 }
@@ -87,7 +89,7 @@ void setupSensorsCalibration() {
   int tablesr0c[] = {3,   457, 617, 618, 520, 440, 374, 327, 293, 263,
                      244, 224, 209, 192, 178, 170, 159, 151, 147, 0};
   int tablesr1c[] = {2,   355, 616, 618, 536, 452, 384, 337, 297, 271,
-                     249, 231, 212, 184, 188, 162, 161, 115, 165, 0};
+                     249, 231, 206, 189, 174, 160, 148, 138, 128, 0};
   int tablesr2c[] = {3,   346, 620, 620, 524, 439, 371, 324, 292, 263,
                      240, 218, 202, 186, 175, 167, 160, 146, 142, 0};
 
@@ -134,6 +136,16 @@ int getRightBackRaw() { return getDistanceRaw(sr4c); }
 int getRightFront() { return getRightDistance(sr5c); }
 
 int getRightFrontRaw() { return getDistanceRaw(sr5c); }
+
+void calibrateRaw() {
+  Serial.print(getLeft());
+  Serial.print("\n");
+
+  Serial.print(getLeftRaw());
+  Serial.print("\n");
+  Serial.print("\n");
+  delay(1500);
+}
 
 // calibrate sensors
 // calibration table of 20 value,
