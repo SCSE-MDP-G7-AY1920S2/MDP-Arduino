@@ -18,17 +18,17 @@ const int kTurnNormalSpeed = 280;
 const int kTurnSlowSpeed = 100;
 
 // Ticks.
-const int kTicks[15] = {310,  596,  891,  1191, 1487, 1790, 2090, 2390,
+const int kTicks[15] = {305,  596,  891,  1191, 1487, 1790, 2090, 2390,
                         2705, 2980, 3275, 3590, 3855, 4130, 4430};
 const int kTicksFast[15] = {299,  600,  893,  1188, 1484, 1789, 2085, 2387,
                             2688, 2980, 3275, 3575, 3870, 4173, 4480};
 
-const int kTurnTicksL90 = 391;
+const int kTurnTicksL90 = 390;
 const int kTurnTicksL45 = 180;
 const int kTurnTicksL10 = 28;
 const int kTurnTicksL1 = 4;
 
-const int kTurnTicksR90 = 391;
+const int kTurnTicksR90 = 388;
 const int kTurnTicksR45 = 186;
 const int kTurnTicksR10 = 28;
 const int kTurnTicksR1 = 4;
@@ -67,25 +67,26 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
   startMotor();
   int currentSpeed = baseSpeed;
   int last_tick_R = 0;
-  double offset = 0;
+  double startRate = 0;
 
   while (rightTick <= totalTicks || leftTick <= totalTicks) {
     unsigned long now = millis();
     if (totalTicks - rightTick < 150) currentSpeed = 100;
 
-    if (offset < 1 && ((rightTick - last_tick_R) >= 10 || rightTick == 0 ||
+    // Start slow and accelerate.
+    if (startRate < 1 && ((rightTick - last_tick_R) >= 10 || rightTick == 0 ||
                        rightTick == last_tick_R)) {
       last_tick_R = rightTick;
-      offset += 0.03;
+      startRate += 0.03;
     }
     if (now - lastTime >= SampleTime) {
       // rightTick as setpoint, leftTick as feedback.
       int tickOffset = pid.step(rightTick, leftTick);
-      if (offset >= 1) {
+      if (startRate >= 1) {
         md.setSpeeds(currentSpeed + tickOffset, currentSpeed - tickOffset);
       } else {
-        md.setSpeeds(offset * (currentSpeed + tickOffset),
-                     offset * (currentSpeed - tickOffset));
+        md.setSpeeds(startRate * (currentSpeed + tickOffset),
+                     startRate * (currentSpeed - tickOffset));
       }
       lastTime = now;
     }
