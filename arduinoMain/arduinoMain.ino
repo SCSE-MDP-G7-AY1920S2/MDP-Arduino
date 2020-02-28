@@ -320,7 +320,7 @@ void tiltAvoidance() {
 
 // send sensor data
 void sendSensor() {
-  delay(500);
+  delay(100);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"SD\",\"fr\":";
   toSend.concat(getFrontRight());
 
