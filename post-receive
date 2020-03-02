@@ -1,0 +1,17 @@
+#!/bin/bash
+export GIT_WORK_TREE=/home/pi/arduino
+
+while read oldrev newrev refname
+do
+    branch=`git rev-parse --symbolic --abbrev-ref ${refname}`
+    echo Checking out branch $branch into worktree $GIT_WORK_TREE...
+    git checkout -f $branch
+done
+
+echo Compiling Arduino sketch in worktree $GIT_WORK_TREE...
+arduino-cli compile --fqbn arduino:avr:uno $GIT_WORK_TREE/arduinoMain
+
+port = `ls /dev/ttyACM* | head -1`
+echo Uploading Arduino sketch to Serial port $port...
+arduino-cli upload -p $port --fqbn arduino:avr:uno $GIT_WORK_TREE/arduinoMain
+
