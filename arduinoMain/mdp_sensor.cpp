@@ -38,7 +38,7 @@ ZSharpIR sr5c(s5, SRmodel, /*m=*/7.5070e+03, /*b=*/41.9073, /*k=*/5.0008);
 ZSharpIR lr3c(s3, LRmodel, /*m=*/4.8193e+04, /*b=*/250.7146, /*k=*/46.2362);
 
 // return distance from sensors (grids).
-int getFrontDistance(ZSharpIR& sensor) {
+int getFrontDistance(const ZSharpIR& sensor) {
   int dist = sensor.distance();
   if (dist < kFrontBorderGrid1)
     return 1;
@@ -47,7 +47,7 @@ int getFrontDistance(ZSharpIR& sensor) {
   return -1;
 }
 
-int getRightDistance(ZSharpIR& sensor) {
+int getRightDistance(const ZSharpIR& sensor) {
   int dist = sensor.distance();
   bool isRightBack = sensor.getIrPin() == s4;
   if (dist < kRightBorderGrid1)
@@ -58,7 +58,7 @@ int getRightDistance(ZSharpIR& sensor) {
   return -1;
 }
 
-int getLeftDistance(ZSharpIR& sensor) {
+int getLeftDistance(const ZSharpIR& sensor) {
   int dist = sensor.distance();
   if (dist < kLRMax) {
     int grid = (dist - kLROffset) / 10 + 1;
@@ -68,7 +68,7 @@ int getLeftDistance(ZSharpIR& sensor) {
 }
 
 // return distance from sensors (cm).
-int getDistanceRaw(ZSharpIR& sensor) { return sensor.distance(); }
+int getDistanceRaw(const ZSharpIR& sensor) { return sensor.distance(); }
 }  // namespace
 
 void setupSensorsCalibration() {
