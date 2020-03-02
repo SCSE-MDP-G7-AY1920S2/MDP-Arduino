@@ -16,21 +16,16 @@
 #define s5 A5  // right top
 
 namespace {
-// Sensor Curve-Fitting Parameters.
-const double kSRP1 = 5.770230285862897e+03;
-const double kSRQ1 = 3.057232146852901;
-const double kSRVMin = 145;
-const double kLRVMin = 170;
 
 // Maximum distance for Grid 1 and 2.
-const int kFrontBorderGrid1 = 17;
-const int kFrontBorderGrid2 = 27;
-const int kRightBorderGrid1 = 16;
-const int kRightFrontBorderGrid2 = 26;
-const int kRightBackBorderGrid2 = 23;
+constexpr int kFrontBorderGrid1 = 17;
+constexpr int kFrontBorderGrid2 = 27;
+constexpr int kRightBorderGrid1 = 16;
+constexpr int kRightFrontBorderGrid2 = 26;
+constexpr int kRightBackBorderGrid2 = 23;
 
-const int kLRMax = 64;
-const int kLROffset = 16;
+constexpr int kLRMax = 64;
+constexpr int kLROffset = 16;
 
 // short IR sensor
 // c - calibrated
@@ -41,7 +36,7 @@ ZSharpIR sr4c(s4, SRmodel);
 ZSharpIR sr5c(s5, SRmodel);
 
 // long IR sensor
-ZSharpIR sr3c = ZSharpIR(s3, LRmodel);
+ZSharpIR sr3c(s3, LRmodel);
 
 // return distance from sensors (grids).
 int getFrontDistance(ZSharpIR& sensor) {
