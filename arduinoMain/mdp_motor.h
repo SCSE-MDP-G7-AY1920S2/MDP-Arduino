@@ -1,10 +1,10 @@
 #ifndef MDP_MOTOR_H_
 #define MDP_MOTOR_H_
 
-void goForward(int cm);
+void goForward();
 void goForwardFast(int cm);
 void goForwardTicks(int ticks);
-void goBackward(int cm);
+void goBackward();
 void goBackwardFast(int cm);
 void goBackwardTicks(int ticks);
 void turnLeft(int angle);

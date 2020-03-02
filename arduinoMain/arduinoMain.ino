@@ -16,6 +16,10 @@ void setup() {
   // allignFront();
   //calibrateSensors();
   //calibrateStart();
+  delay(1000);
+
+  goForwardFast(80);
+  }
 }
 
 void loop() {
@@ -31,12 +35,12 @@ void loop() {
         break;
 
       case 'W':  // exploration move front.
-        goForward(10);
+        goForward();
         sendSensor();
         break;
 
       case 'S':  // exploration move back.
-        goBackward(10);
+        goBackward();
         sendSensor();
         break;
 
@@ -280,18 +284,18 @@ sharpAvoidance is for 90 degree turn
 tiltAvoidance is for 45 degree turn*/
 void sharpAvoidance() {
   while (true) {
-    goForward(10);
+    goForward();
     if (getFrontMiddle() == 1) {
       delay(500);
       turnLeft(90);
-      goForward(20);
+      goForwardFast(20);
       delay(500);
       turnRight(90);
       delay(500);
-      goForward(50);
+      goForwardFast(50);
       turnRight(90);
       delay(500);
-      goForward(20);
+      goForwardFast(20);
       delay(500);
       turnLeft(90);
     }
@@ -300,19 +304,19 @@ void sharpAvoidance() {
 
 void tiltAvoidance() {
   while (true) {
-    goForward(10);
+    goForward();
     if (getFrontMiddle() == 1) {
       delay(500);
       turnLeft(45);
-      goForward(20);
+      goForwardFast(20);
       delay(500);
       turnRight(45);
       delay(500);
-      goForward(30);
+      goForwardFast(30);
       delay(500);
       turnRight(45);
       delay(500);
-      goForward(20);
+      goForwardFast(20);
       delay(500);
       turnLeft(45);
     }
