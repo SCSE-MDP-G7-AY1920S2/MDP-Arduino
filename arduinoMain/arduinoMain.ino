@@ -14,8 +14,8 @@ void setup() {
   setupPID();
   setupSensorsCalibration();
   // allignFront();
-  // calibrateSensors();
-  calibrateStart();
+  //calibrateSensors();
+  //calibrateStart();
 }
 
 void loop() {

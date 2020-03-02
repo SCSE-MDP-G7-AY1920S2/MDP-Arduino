@@ -86,10 +86,11 @@ void setupSensorsCalibration() {
                      240, 218, 202, 186, 175, 167, 160, 146, 142, 0};
 
   int tablesr3c[] = {2,   374, 447, 563, 525, 489, 447, 408, 371, 330,
-                     300, 274, 251, 236, 221, 205, 189, 178, 171, 0};
+                     300, 274, 251, 233, 213, 201, 189, 182, 166, 0};
+                     //236, 221, 205, 189, 178, 171, 0};
                      
-  int tablesr4c[] = {3,   355, 613, 620, 570, 473, 402, 352, 311, 278,
-                     257, 236, 220, 200, 188, 177, 165, 158, 150, 0};
+  int tablesr4c[] = {3,241,576,620,561,465,397,347,302,273,250,226,207,191,176,165,150,143,130,0};
+                     
   int tablesr5c[] = {3,   346, 616, 622, 564, 470, 398, 347, 306, 277,
                      253, 230, 215, 198, 188, 176, 164, 157, 145, 0};
 
@@ -182,7 +183,7 @@ void calibrateSensors() {
   sr0c.DisplayCalibration(Serial);
   sr1c.DisplayCalibration(Serial);
   sr2c.DisplayCalibration(Serial);
-*/
+
   // calibrate left side
   Serial.println("Left calibration, send g to begin");
   while (Serial.read() != 'g') {
@@ -203,20 +204,20 @@ void calibrateSensors() {
 
   Serial.println("End of calibration");
   sr3c.DisplayCalibration(Serial);
-
+*/
   // calibrate right side
   Serial.println("Right calibration, send g to begin");
   while (Serial.read() != 'g') {
   }
 
   sr4c.CalibrateStart();
-  sr5c.CalibrateStart();
+  //sr5c.CalibrateStart();
 
   for (int i = 0; i < 19; i++) {
     sr4c.CalibrateNextStep();
     sr4c.DisplayCalibration(Serial);
-    sr5c.CalibrateNextStep();
-    sr5c.DisplayCalibration(Serial);
+    //sr5c.CalibrateNextStep();
+    //sr5c.DisplayCalibration(Serial);
     Serial.print("Move to ");
     Serial.print((i + 1) * 2);
     Serial.print(", and send g\n");
@@ -227,5 +228,5 @@ void calibrateSensors() {
 
   Serial.println("End of calibration");
   sr4c.DisplayCalibration(Serial);
-  sr5c.DisplayCalibration(Serial);
+  //sr5c.DisplayCalibration(Serial);
 }
