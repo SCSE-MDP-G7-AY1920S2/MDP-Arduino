@@ -14,7 +14,7 @@ void sort(int a[], int n) {
     a[j + 1] = next;
   }
 }
-}
+}  // namespace
 
 ZSharpIR::ZSharpIR(int ir_pin, const uint32_t model, double m, double b,
                    double k)

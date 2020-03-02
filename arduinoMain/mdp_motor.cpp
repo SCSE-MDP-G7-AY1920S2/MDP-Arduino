@@ -75,7 +75,7 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
 
     // Start slow and accelerate.
     if (startRate < 1 && ((rightTick - last_tick_R) >= 10 || rightTick == 0 ||
-                       rightTick == last_tick_R)) {
+                          rightTick == last_tick_R)) {
       last_tick_R = rightTick;
       startRate += 0.03;
     }

@@ -1,6 +1,7 @@
 #include "mdp_sensor.h"
 
 #include <Arduino.h>
+
 #include "sharp_ir.h"
 
 // Model Number for IR sensors.
@@ -52,8 +53,8 @@ int getRightDistance(const ZSharpIR& sensor) {
   bool isRightBack = sensor.getIrPin() == s4;
   if (dist < kRightBorderGrid1)
     return 1;
-  else if ((!isRightBack && dist < kRightFrontBorderGrid2)
-          || (isRightBack && dist < kRightBackBorderGrid2))
+  else if ((!isRightBack && dist < kRightFrontBorderGrid2) ||
+           (isRightBack && dist < kRightBackBorderGrid2))
     return 2;
   return -1;
 }
@@ -71,8 +72,7 @@ int getLeftDistance(const ZSharpIR& sensor) {
 int getDistanceRaw(const ZSharpIR& sensor) { return sensor.distance(); }
 }  // namespace
 
-void setupSensorsCalibration() {
-}
+void setupSensorsCalibration() {}
 
 int getFrontRight() { return getFrontDistance(sr0c); }
 
@@ -117,6 +117,4 @@ void calibrateRaw() {
 
 // calibrate sensors
 // calibration table of 20 value,
-void calibrateSensors() {
-  
-}
+void calibrateSensors() {}
