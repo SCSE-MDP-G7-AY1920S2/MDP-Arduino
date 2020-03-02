@@ -18,14 +18,14 @@
 
 namespace {
 // Maximum distance for Grid 1 and 2.
-const int kFrontBorderGrid1 = 17;
-const int kFrontBorderGrid2 = 27;
-const int kRightBorderGrid1 = 16;
-const int kRightFrontBorderGrid2 = 26;
-const int kRightBackBorderGrid2 = 23;
+constexpr int kFrontBorderGrid1 = 17;
+constexpr int kFrontBorderGrid2 = 27;
+constexpr int kRightBorderGrid1 = 16;
+constexpr int kRightFrontBorderGrid2 = 26;
+constexpr int kRightBackBorderGrid2 = 25;
 
-const int kLRMax = 64;
-const int kLROffset = 16;
+constexpr int kLRMax = 64;
+constexpr int kLROffset = 16;
 
 // short IR sensor
 // c - calibrated
@@ -103,13 +103,16 @@ void calibrateRaw() {
   Serial.print(getRightFront());
   Serial.print(" rb:");
   Serial.print(getRightBack());
+  Serial.print(" l:");
+  Serial.print(getLeft());
   Serial.print("\n");
 
   Serial.print("rf:");
   Serial.print(getRightFrontRaw());
   Serial.print(" rb:");
   Serial.print(getRightBackRaw());
-  Serial.print("\n");
+  Serial.print(" l:");
+  Serial.print(getLeftRaw());
   Serial.print("\n");
   Serial.print("\n");
   delay(1500);

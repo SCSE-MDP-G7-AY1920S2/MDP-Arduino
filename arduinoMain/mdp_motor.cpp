@@ -10,28 +10,27 @@
 
 namespace {
 // Speed config.
-const int kMoveFastSpeed = 380;
-const int kMoveSlowSpeed = 320;
-const int kMoveTickSpeed = 100;
-const int kTurnFastSpeed = 300;
-const int kTurnNormalSpeed = 280;
-const int kTurnSlowSpeed = 100;
+constexpr int kMoveFastSpeed = 380;
+constexpr int kMoveSlowSpeed = 320;
+constexpr int kMoveTickSpeed = 100;
+constexpr int kTurnFastSpeed = 300;
+constexpr int kTurnNormalSpeed = 280;
+constexpr int kTurnSlowSpeed = 100;
 
 // Ticks.
-const int kTicks[15] = {305,  596,  891,  1191, 1487, 1790, 2090, 2390,
-                        2705, 2980, 3275, 3590, 3855, 4130, 4430};
-const int kTicksFast[15] = {299,  600,  893,  1188, 1484, 1789, 2085, 2387,
-                            2688, 2980, 3275, 3575, 3870, 4173, 4480};
+const int kTicksFast[15] = {310,  605,  905,  1207, 1494, 1791, 2086, 2380,
+                            2688, 2978, 3275, 3575, 3872, 4173, 4472};
+constexpr int kMoveTicks10 = 305;
 
-const int kTurnTicksL90 = 382;
-const int kTurnTicksL45 = 180;
-const int kTurnTicksL10 = 28;
-const int kTurnTicksL1 = 2;
+constexpr int kTurnTicksL90 = 382;
+constexpr int kTurnTicksL45 = 180;
+constexpr int kTurnTicksL10 = 28;
+constexpr int kTurnTicksL1 = 2;
 
-const int kTurnTicksR90 = 381;
-const int kTurnTicksR45 = 186;
-const int kTurnTicksR10 = 28;
-const int kTurnTicksR1 = 2;
+constexpr int kTurnTicksR90 = 381;
+constexpr int kTurnTicksR45 = 186;
+constexpr int kTurnTicksR10 = 28;
+constexpr int kTurnTicksR1 = 2;
 
 // Motor Driver shield.
 DualVNH5019MotorShield md;
@@ -85,8 +84,8 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
       if (startRate >= 1) {
         md.setSpeeds(currentSpeed + tickOffset, currentSpeed - tickOffset);
       } else {
-        md.setSpeeds(startRate * (currentSpeed + tickOffset),
-                     startRate * (currentSpeed - tickOffset));
+        md.setM1Speed(startRate * (currentSpeed + tickOffset));
+        md.setM2Speed(startRate * (currentSpeed - tickOffset));
       }
       lastTime = now;
     }
@@ -178,9 +177,8 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
 }
 }  // namespace
 
-void goForward(int cm) {
-  int totalTicks = _cmToTicks(kTicks, cm);
-  _goForwardRamp(totalTicks, kMoveSlowSpeed, ShortTurnPID);
+void goForward() {
+  _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, ShortTurnPID);
 }
 
 void goForwardFast(int cm) {
@@ -192,9 +190,8 @@ void goForwardTicks(int ticks) {
   _goForwardTicks(ticks, kMoveTickSpeed, ShortTurnPID);
 }
 
-void goBackward(int cm) {
-  int totalTicks = _cmToTicks(kTicks, cm);
-  _goForwardTicks(totalTicks, kMoveSlowSpeed, ShortTurnPID, /*reverse=*/true);
+void goBackward() {
+  _goForwardTicks(kMoveTicks10, kMoveSlowSpeed, ShortTurnPID, /*reverse=*/true);
 }
 
 void goBackwardFast(int cm) {
@@ -246,7 +243,9 @@ void setLeftSpeed(int speed) { md.setM1Speed(speed); }
 
 void setRightSpeed(int speed) { md.setM2Speed(speed); }
 
-void setupPID() { ShortTurnPID.setOutputRange(-400, 400); }
+void setupPID() { 
+  ShortTurnPID.setOutputRange(-400, 400);
+}
 
 void startEncoder() {
   md.init();

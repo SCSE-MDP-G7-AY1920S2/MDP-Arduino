@@ -14,8 +14,9 @@ void setup() {
   setupPID();
   setupSensorsCalibration();
   // allignFront();
-  // calibrateSensors();
+  //calibrateSensors();
   calibrateStart();
+  
 }
 
 void loop() {
@@ -31,12 +32,12 @@ void loop() {
         break;
 
       case 'W':  // exploration move front.
-        goForward(10);
+        goForward();
         sendSensor();
         break;
 
       case 'S':  // exploration move back.
-        goBackward(10);
+        goBackward();
         sendSensor();
         break;
 
@@ -161,14 +162,16 @@ void distanceFront() {
 // Turns robot back to "North" position
 // when robot is facing "South".
 void southToNorth() {
-  delay(15000);
-  turnLeft(90);
-  parallelWall();
-  distanceFront();
   allignFront();
+  delay(250);
+  distanceFront();
+  delay(250);
   turnRight(90);
-  distanceFront();
+  delay(250);
   allignFront();
+  delay(250);
+  distanceFront();
+  delay(250);
   turnRight(90);
 }
 
@@ -280,18 +283,18 @@ sharpAvoidance is for 90 degree turn
 tiltAvoidance is for 45 degree turn*/
 void sharpAvoidance() {
   while (true) {
-    goForward(10);
+    goForward();
     if (getFrontMiddle() == 1) {
       delay(500);
       turnLeft(90);
-      goForward(20);
+      goForwardFast(20);
       delay(500);
       turnRight(90);
       delay(500);
-      goForward(50);
+      goForwardFast(50);
       turnRight(90);
       delay(500);
-      goForward(20);
+      goForwardFast(20);
       delay(500);
       turnLeft(90);
     }
@@ -300,19 +303,19 @@ void sharpAvoidance() {
 
 void tiltAvoidance() {
   while (true) {
-    goForward(10);
+    goForward();
     if (getFrontMiddle() == 1) {
       delay(500);
       turnLeft(45);
-      goForward(20);
+      goForwardFast(20);
       delay(500);
       turnRight(45);
       delay(500);
-      goForward(30);
+      goForwardFast(30);
       delay(500);
       turnRight(45);
       delay(500);
-      goForward(20);
+      goForwardFast(20);
       delay(500);
       turnLeft(45);
     }
