@@ -73,15 +73,6 @@ int getDistanceRaw(ZSharpIR& sensor) { return sensor.distance(); }
 }  // namespace
 
 void setupSensorsCalibration() {
-  /*
-  int tablesr0c[] = {4,   673, 484, 344, 281, 223, 190, 143, 139, 106,
-                     96,  85,  75,  57,  42,  49,  41,  32,  27,  0};
-  int tablesr1c[] = {2,   663, 489, 341, 268, 227, 197, 163, 145, 129,
-                     114, 102, 90,  73,  70,  61,  53,  38,  35,  0};
-  int tablesr2c[] = {4,   664, 481, 325, 254, 206, 191, 167, 127, 122,
-                     107, 83,  67,  92,  70,  65,  59,  47,  40,  0};
-  */
-
   int tablesr0c[] = {3,   457, 617, 618, 520, 440, 374, 327, 293, 263,
                      244, 224, 209, 192, 178, 170, 159, 151, 147, 0};
   int tablesr1c[] = {2,   355, 616, 618, 536, 452, 384, 337, 297, 271,
@@ -90,14 +81,11 @@ void setupSensorsCalibration() {
                      240, 218, 202, 186, 175, 167, 160, 146, 142, 0};
 
   int tablesr3c[] = {2,   374, 447, 563, 525, 489, 447, 408, 371, 330,
-                     300, 274, 251, 236, 221, 205, 189, 178, 171, 0};
-
-  // int
-  // tablesr4c[]={3,618,620,618,517,437,377,330,293,270,246,228,208,196,184,169,165,158,151,0};
-  // int
-  // tablesr5c[]={10,609,623,619,516,434,373,324,288,265,241,227,206,195,180,168,161,153,146,0};
-  int tablesr4c[] = {3,   355, 613, 620, 570, 473, 402, 352, 311, 278,
-                     257, 236, 220, 200, 188, 177, 165, 158, 150, 0};
+                     300, 274, 251, 233, 213, 201, 189, 182, 166, 0};
+                     //236, 221, 205, 189, 178, 171, 0};
+                     
+  int tablesr4c[] = {3,241,576,620,561,465,397,347,302,273,250,226,207,191,176,165,150,143,130,0};
+                     
   int tablesr5c[] = {3,   346, 616, 622, 564, 470, 398, 347, 306, 277,
                      253, 230, 215, 198, 188, 176, 164, 157, 145, 0};
 
@@ -190,7 +178,7 @@ void calibrateSensors() {
   sr0c.DisplayCalibration(Serial);
   sr1c.DisplayCalibration(Serial);
   sr2c.DisplayCalibration(Serial);
-*/
+
   // calibrate left side
   Serial.println("Left calibration, send g to begin");
   while (Serial.read() != 'g') {
@@ -211,20 +199,20 @@ void calibrateSensors() {
 
   Serial.println("End of calibration");
   sr3c.DisplayCalibration(Serial);
-
+*/
   // calibrate right side
   Serial.println("Right calibration, send g to begin");
   while (Serial.read() != 'g') {
   }
 
   sr4c.CalibrateStart();
-  sr5c.CalibrateStart();
+  //sr5c.CalibrateStart();
 
   for (int i = 0; i < 19; i++) {
     sr4c.CalibrateNextStep();
     sr4c.DisplayCalibration(Serial);
-    sr5c.CalibrateNextStep();
-    sr5c.DisplayCalibration(Serial);
+    //sr5c.CalibrateNextStep();
+    //sr5c.DisplayCalibration(Serial);
     Serial.print("Move to ");
     Serial.print((i + 1) * 2);
     Serial.print(", and send g\n");
@@ -235,5 +223,5 @@ void calibrateSensors() {
 
   Serial.println("End of calibration");
   sr4c.DisplayCalibration(Serial);
-  sr5c.DisplayCalibration(Serial);
+  //sr5c.DisplayCalibration(Serial);
 }
