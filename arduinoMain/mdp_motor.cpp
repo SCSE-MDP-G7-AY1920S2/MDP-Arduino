@@ -19,7 +19,7 @@ constexpr int kTurnSlowSpeed = 100;
 
 // Ticks.
 const int kTicksFast[15] = {310,  605,  905,  1207, 1494, 1791, 2086, 2380,
-                            2688, 2980, 3275, 3575, 3870, 4173, 4480};
+                            2688, 2978, 3275, 3575, 3872, 4173, 4472};
 constexpr int kMoveTicks10 = 305;
 
 constexpr int kTurnTicksL90 = 382;

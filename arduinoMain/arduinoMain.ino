@@ -16,10 +16,10 @@ void setup() {
   // allignFront();
   //calibrateSensors();
   //calibrateStart();
-  delay(1000);
+  delay(5000);
 
-  goForwardFast(80);
-  }
+  goForwardFast(150);
+  
 }
 
 void loop() {
