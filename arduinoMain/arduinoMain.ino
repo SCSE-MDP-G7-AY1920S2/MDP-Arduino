@@ -18,7 +18,7 @@ void setup() {
   //calibrateStart();
   delay(5000);
 
-  goForwardFast(150);
+  goForwardFast(100);
   
 }
 
@@ -165,14 +165,16 @@ void distanceFront() {
 // Turns robot back to "North" position
 // when robot is facing "South".
 void southToNorth() {
-  delay(15000);
-  turnLeft(90);
-  parallelWall();
-  distanceFront();
   allignFront();
+  delay(250);
+  distanceFront();
+  delay(250);
   turnRight(90);
-  distanceFront();
+  delay(250);
   allignFront();
+  delay(250);
+  distanceFront();
+  delay(250);
   turnRight(90);
 }
 
