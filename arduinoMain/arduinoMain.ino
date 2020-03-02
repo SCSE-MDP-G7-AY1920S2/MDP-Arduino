@@ -15,10 +15,7 @@ void setup() {
   setupSensorsCalibration();
   // allignFront();
   //calibrateSensors();
-  //calibrateStart();
-  delay(5000);
-
-  goForwardFast(150);
+  calibrateStart();
   
 }
 

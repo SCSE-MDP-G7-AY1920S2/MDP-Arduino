@@ -22,7 +22,7 @@ constexpr int kFrontBorderGrid1 = 17;
 constexpr int kFrontBorderGrid2 = 27;
 constexpr int kRightBorderGrid1 = 16;
 constexpr int kRightFrontBorderGrid2 = 26;
-constexpr int kRightBackBorderGrid2 = 23;
+constexpr int kRightBackBorderGrid2 = 25;
 
 constexpr int kLRMax = 64;
 constexpr int kLROffset = 16;
@@ -126,13 +126,16 @@ void calibrateRaw() {
   Serial.print(getRightFront());
   Serial.print(" rb:");
   Serial.print(getRightBack());
+  Serial.print(" l:");
+  Serial.print(getLeft());
   Serial.print("\n");
 
   Serial.print("rf:");
   Serial.print(getRightFrontRaw());
   Serial.print(" rb:");
   Serial.print(getRightBackRaw());
-  Serial.print("\n");
+  Serial.print(" l:");
+  Serial.print(getLeftRaw());
   Serial.print("\n");
   Serial.print("\n");
   delay(1500);
