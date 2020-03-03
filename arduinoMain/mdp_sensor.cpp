@@ -53,8 +53,8 @@ int getRightDistance(ZSharpIR& sensor) {
   bool isRightBack = sensor.getIrPin() == s4;
   if (dist < kRightBorderGrid1)
     return 1;
-  else if ((!isRightBack && dist < kRightFrontBorderGrid2)
-          || (isRightBack && dist < kRightBackBorderGrid2))
+  else if ((!isRightBack && dist < kRightFrontBorderGrid2) ||
+           (isRightBack && dist < kRightBackBorderGrid2))
     return 2;
   return -1;
 }
@@ -82,10 +82,11 @@ void setupSensorsCalibration() {
 
   int tablesr3c[] = {2,   374, 447, 563, 525, 489, 447, 408, 371, 330,
                      300, 274, 251, 233, 213, 201, 189, 182, 166, 0};
-                     //236, 221, 205, 189, 178, 171, 0};
-                     
-  int tablesr4c[] = {3,241,576,620,561,465,397,347,302,273,250,226,207,191,176,165,150,143,130,0};
-                     
+  // 236, 221, 205, 189, 178, 171, 0};
+
+  int tablesr4c[] = {3,   241, 576, 620, 561, 465, 397, 347, 302, 273,
+                     250, 226, 207, 191, 176, 165, 150, 143, 130, 0};
+
   int tablesr5c[] = {3,   346, 616, 622, 564, 470, 398, 347, 306, 277,
                      253, 230, 215, 198, 188, 176, 164, 157, 145, 0};
 
@@ -122,22 +123,16 @@ int getRightFront() { return getRightDistance(sr5c); }
 int getRightFrontRaw() { return getDistanceRaw(sr5c); }
 
 void calibrateRaw() {
-  Serial.print("rf:");
-  Serial.print(getRightFront());
-  Serial.print(" rb:");
-  Serial.print(getRightBack());
+  Serial.print("fm:");
+  Serial.print(getFrontMiddle());
   Serial.print(" l:");
-  Serial.print(getLeft());
-  Serial.print("\n");
+  Serial.println(getLeft());
 
-  Serial.print("rf:");
-  Serial.print(getRightFrontRaw());
-  Serial.print(" rb:");
-  Serial.print(getRightBackRaw());
-  Serial.print(" l:");
-  Serial.print(getLeftRaw());
-  Serial.print("\n");
-  Serial.print("\n");
+  Serial.print("fmRaw:");
+  Serial.print(getFrontMiddleRaw());
+  Serial.print(" lRaw:");
+  Serial.println(getLeftRaw());
+  Serial.println();
   delay(1500);
 }
 
@@ -209,13 +204,13 @@ void calibrateSensors() {
   }
 
   sr4c.CalibrateStart();
-  //sr5c.CalibrateStart();
+  // sr5c.CalibrateStart();
 
   for (int i = 0; i < 19; i++) {
     sr4c.CalibrateNextStep();
     sr4c.DisplayCalibration(Serial);
-    //sr5c.CalibrateNextStep();
-    //sr5c.DisplayCalibration(Serial);
+    // sr5c.CalibrateNextStep();
+    // sr5c.DisplayCalibration(Serial);
     Serial.print("Move to ");
     Serial.print((i + 1) * 2);
     Serial.print(", and send g\n");
@@ -226,5 +221,5 @@ void calibrateSensors() {
 
   Serial.println("End of calibration");
   sr4c.DisplayCalibration(Serial);
-  //sr5c.DisplayCalibration(Serial);
+  // sr5c.DisplayCalibration(Serial);
 }

@@ -14,9 +14,8 @@ void setup() {
   setupPID();
   setupSensorsCalibration();
   // allignFront();
-  //calibrateSensors();
+  // calibrateSensors();
   calibrateStart();
-  
 }
 
 void loop() {
@@ -284,6 +283,7 @@ tiltAvoidance is for 45 degree turn*/
 void sharpAvoidance() {
   while (true) {
     goForward();
+    delay(300);
     if (getFrontMiddle() == 1) {
       delay(500);
       turnLeft(90);
@@ -304,10 +304,11 @@ void sharpAvoidance() {
 void tiltAvoidance() {
   while (true) {
     goForward();
-    if (getFrontMiddle() == 1) {
+    int dist = getFrontMiddleRaw();
+    if (dist <= 30) {
       delay(500);
       turnLeft(45);
-      goForwardFast(20);
+      goForwardFast(30);
       delay(500);
       turnRight(45);
       delay(500);
@@ -315,7 +316,7 @@ void tiltAvoidance() {
       delay(500);
       turnRight(45);
       delay(500);
-      goForwardFast(20);
+      goForwardFast(30);
       delay(500);
       turnLeft(45);
     }
