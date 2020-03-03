@@ -25,12 +25,12 @@ constexpr int kMoveTicks10 = 305;
 constexpr int kTurnTicksL90 = 382;
 constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
-constexpr int kTurnTicksL1 = 2;
+constexpr int kTurnTicksL1 = 1;
 
 constexpr int kTurnTicksR90 = 381;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
-constexpr int kTurnTicksR1 = 2;
+constexpr int kTurnTicksR1 = 1;
 
 // Motor Driver shield.
 DualVNH5019MotorShield md;
@@ -39,7 +39,7 @@ DualVNH5019MotorShield md;
 const unsigned SampleTime = 5;
 unsigned long lastTime = millis();
 bool shouldResetPID = false;
-FastPID ShortTurnPID(/*kp=*/17.2, /*ki=*/8.2, /*kd=*/0,
+FastPID ShortTurnPID(/*kp=*/16.8, /*ki=*/7.7, /*kd=*/0,
                      /*hz=*/200, /*bits=*/16, /*sign=*/true);
 FastPID LongPID(/*kp=*/7.5, /*ki=*/3.15, /*kd=*/0.001,
                 /*hz=*/200, /*bits=*/16, /*sign=*/true);

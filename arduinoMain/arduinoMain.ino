@@ -4,7 +4,7 @@
 String toSend = "";
 String command = "";
 
-const int kMaxCalibrationTrial = 10;
+const int kMaxCalibrationTrial = 11;
 
 void setup() {
   // put your setup code here, to run once:
