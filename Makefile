@@ -15,7 +15,3 @@ $(targets) & : $(src)
 	arduino-cli compile $(flags) $(board) $(sketch)
 clean:
 	rm $(targets)
-
-
-
-
