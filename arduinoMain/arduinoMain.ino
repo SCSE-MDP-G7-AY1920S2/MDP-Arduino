@@ -162,30 +162,30 @@ void distanceFront() {
 // when robot is facing "South".
 void southToNorth() {
   allignFront();
-  delay(250);
+  delay(100);
   distanceFront();
-  delay(250);
+  delay(100);
   turnRight(90);
-  delay(250);
+  delay(100);
   allignFront();
-  delay(250);
+  delay(100);
   distanceFront();
-  delay(250);
+  delay(100);
   turnRight(90);
 }
 
 // Turns robot back to "North" position
 // when robot is facing "East".
 void eastToNorth() {
-  delay(15000);
+  allignFront();
+  delay(100);
+  distanceFront();
+  delay(100);
+  turnLeft(90);
+  delay(100);
   parallelWall();
-  distanceFront();
-  allignFront();
-  turnRight(90);
-  distanceFront();
-  allignFront();
-  turnRight(90);
 }
+
 
 // Split fast actions string into separate actions.
 void splitStringToAction(String com) {
