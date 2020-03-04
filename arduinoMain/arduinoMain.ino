@@ -95,7 +95,7 @@ void loop() {
 // aligns the robot against the wall
 void parallelWall() {
   // Right front further to obstacle by 1
-  int rf = getRightFrontRaw() + 1;
+  int rf = getRightFrontRaw();
   int rb = getRightBackRaw();
   int diff = rf - rb;
   int trial = 0;
@@ -108,7 +108,7 @@ void parallelWall() {
     else if (rb < rf)
       turnRight(1);
 
-    rf = getRightFrontRaw() + 1;
+    rf = getRightFrontRaw();
     rb = getRightBackRaw();
     diff = rf - rb;
 
