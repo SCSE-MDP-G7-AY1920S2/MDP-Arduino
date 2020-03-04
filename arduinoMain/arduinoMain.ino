@@ -69,6 +69,10 @@ void loop() {
         sendFin();
         break;
 
+      case 'Q':  // calibrate when facing east at the start.
+        calibrateStart();
+        break;
+
       // Reset robot to face "North".
       case 'G':
         southToNorth();
@@ -170,6 +174,8 @@ void southToNorth() {
   allignFront();
   delay(100);
   distanceFront();
+  delay(100);
+  allignFront();
   delay(100);
   turnRight(90);
 }
