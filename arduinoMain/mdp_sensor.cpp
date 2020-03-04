@@ -40,7 +40,7 @@ ZSharpIR sr3c(s3, LRmodel);
 
 // return distance from sensors (grids).
 int getFrontDistance(ZSharpIR& sensor) {
-  int dist = sensor.distance()/10;
+  int dist = round(sensor.distance()/10);
   if (dist < kFrontBorderGrid1)
     return 1;
   else if (dist < kFrontBorderGrid2)
@@ -49,7 +49,7 @@ int getFrontDistance(ZSharpIR& sensor) {
 }
 
 int getRightDistance(ZSharpIR& sensor) {
-  int dist = sensor.distance()/10;
+  int dist = round(sensor.distance()/10);
   bool isRightBack = sensor.getIrPin() == s4;
   if (dist < kRightBorderGrid1)
     return 1;
@@ -60,7 +60,7 @@ int getRightDistance(ZSharpIR& sensor) {
 }
 
 int getLeftDistance(ZSharpIR& sensor) {
-  int dist = sensor.distance()/10;
+  int dist = round(sensor.distance()/10);
   if (dist < kLRMax) {
     int grid = (dist - kLROffset) / 10 + 1;
     return (grid > 0) ? grid : 1;
