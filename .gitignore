@@ -47,4 +47,3 @@ ehthumbs.db
 .vscode/
 libraries/
 deploy.sh
-*.sh
