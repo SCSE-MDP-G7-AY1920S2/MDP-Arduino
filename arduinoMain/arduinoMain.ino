@@ -101,7 +101,7 @@ void parallelWall() {
   int trial = 0;
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && abs(diff) > 0) {
+  while (trial < kMaxCalibrationTrial && abs(diff) > 2) {
     if (rf < rb)
       turnLeft(1);
 
@@ -126,7 +126,7 @@ void allignFront() {
 
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && abs(diff) != 0) {
+  while (trial < kMaxCalibrationTrial && abs(diff) > 2) {
     if (fl > fr)
       turnRight(1);
 
