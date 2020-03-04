@@ -10,7 +10,7 @@
 
 namespace {
 // Speed config.
-constexpr int kMoveFastSpeed = 380;
+constexpr int kMoveFastSpeed = 370;
 constexpr int kMoveSlowSpeed = 320;
 constexpr int kMoveTickSpeed = 100;
 constexpr int kTurnFastSpeed = 300;
@@ -18,19 +18,20 @@ constexpr int kTurnNormalSpeed = 280;
 constexpr int kTurnSlowSpeed = 100;
 
 // Ticks.
-const int kTicksFast[15] = {310,  605,  905,  1207, 1494, 1791, 2086, 2380,
-                            2688, 2978, 3275, 3575, 3872, 4173, 4472};
+const int kTicksFast[15] = {310,  610,  905,  1207, 1513, 1807, 2103, 2400,
+                            2700, 3005, 3323, 3620, 3935, 4221, 4520};
+constexpr int kMoveTicks5 = 150;
 constexpr int kMoveTicks10 = 305;
 
 constexpr int kTurnTicksL90 = 382;
-constexpr int kTurnTicksL45 = 180;
+constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
-constexpr int kTurnTicksL1 = 2;
+constexpr int kTurnTicksL1 = 1;
 
 constexpr int kTurnTicksR90 = 381;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
-constexpr int kTurnTicksR1 = 2;
+constexpr int kTurnTicksR1 = 1;
 
 // Motor Driver shield.
 DualVNH5019MotorShield md;
@@ -39,8 +40,10 @@ DualVNH5019MotorShield md;
 const unsigned SampleTime = 5;
 unsigned long lastTime = millis();
 bool shouldResetPID = false;
-FastPID ShortTurnPID(/*kp=*/17.2, /*ki=*/8.2, /*kd=*/0,
+FastPID ShortTurnPID(/*kp=*/16.8, /*ki=*/7.7, /*kd=*/0,
                      /*hz=*/200, /*bits=*/16, /*sign=*/true);
+FastPID LongPID(/*kp=*/7.5, /*ki=*/3.15, /*kd=*/0.001,
+                /*hz=*/200, /*bits=*/16, /*sign=*/true);
 
 // Interrupt driven tick counts.
 volatile int rightTick = 0;
@@ -177,13 +180,12 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
 }
 }  // namespace
 
-void goForward() {
-  _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, ShortTurnPID);
-}
+void goForward() { _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, ShortTurnPID); }
 
+void goForwardHalf() { _goForwardRamp(kMoveTicks5, kMoveFastSpeed, LongPID); }
 void goForwardFast(int cm) {
   int totalTicks = _cmToTicks(kTicksFast, cm);
-  _goForwardRamp(totalTicks, kMoveFastSpeed, ShortTurnPID);
+  _goForwardRamp(totalTicks, kMoveFastSpeed, LongPID);
 }
 
 void goForwardTicks(int ticks) {
@@ -243,8 +245,9 @@ void setLeftSpeed(int speed) { md.setM1Speed(speed); }
 
 void setRightSpeed(int speed) { md.setM2Speed(speed); }
 
-void setupPID() { 
+void setupPID() {
   ShortTurnPID.setOutputRange(-400, 400);
+  LongPID.setOutputRange(-400, 400);
 }
 
 void startEncoder() {

@@ -4,7 +4,7 @@
 String toSend = "";
 String command = "";
 
-const int kMaxCalibrationTrial = 10;
+const int kMaxCalibrationTrial = 11;
 
 void setup() {
   // put your setup code here, to run once:
@@ -14,9 +14,8 @@ void setup() {
   setupPID();
   setupSensorsCalibration();
   // allignFront();
-  //calibrateSensors();
+  // calibrateSensors();
   calibrateStart();
-  
 }
 
 void loop() {
@@ -70,6 +69,10 @@ void loop() {
         sendFin();
         break;
 
+      case 'Q':  // calibrate when facing east at the start.
+        calibrateStart();
+        break;
+
       // Reset robot to face "North".
       case 'G':
         southToNorth();
@@ -96,7 +99,7 @@ void loop() {
 // aligns the robot against the wall
 void parallelWall() {
   // Right front further to obstacle by 1
-  int rf = getRightFrontRaw() + 1;
+  int rf = getRightFrontRaw();
   int rb = getRightBackRaw();
   int diff = rf - rb;
   int trial = 0;
@@ -109,7 +112,7 @@ void parallelWall() {
     else if (rb < rf)
       turnRight(1);
 
-    rf = getRightFrontRaw() + 1;
+    rf = getRightFrontRaw();
     rb = getRightBackRaw();
     diff = rf - rb;
 
@@ -163,30 +166,31 @@ void distanceFront() {
 // when robot is facing "South".
 void southToNorth() {
   allignFront();
-  delay(250);
+  delay(100);
   distanceFront();
-  delay(250);
+  delay(100);
   turnRight(90);
-  delay(250);
+  delay(100);
   allignFront();
-  delay(250);
+  delay(100);
   distanceFront();
-  delay(250);
+  delay(100);
+  allignFront();
+  delay(100);
   turnRight(90);
 }
 
 // Turns robot back to "North" position
 // when robot is facing "East".
+// turn right
 void eastToNorth() {
-  delay(15000);
-  parallelWall();
-  distanceFront();
   allignFront();
-  turnRight(90);
+  delay(100);
   distanceFront();
-  allignFront();
+  delay(100);
   turnRight(90);
 }
+
 
 // Split fast actions string into separate actions.
 void splitStringToAction(String com) {
@@ -195,20 +199,25 @@ void splitStringToAction(String com) {
     if (com.charAt(i) == ',') {
       command = com.substring(j, i);
       j = i + 1;
-      doFastAction(command);
+      doFastAction(command, /*lastAction=*/false);
       delay(500);
     }
   }
 
   command = com.substring(j, com.length());
-  doFastAction(command);
+  doFastAction(command, /*lastAction=*/true);
 }
 
-void doFastAction(String com) {
+void doFastAction(String com, bool lastAction) {
   if (com.charAt(0) == 'w') {
     int moveDistance = com.substring(1).toInt();
+    if (lastAction) moveDistance--;
     if (moveDistance > 0 && moveDistance <= 15) {
       goForwardFast(moveDistance * 10);
+    }
+    if (lastAction) {
+      if (moveDistance > 0) delay(500);
+      maybeMoveOneGrid();
     }
   }
 
@@ -234,6 +243,16 @@ void doFastAction(String com) {
     else if (com.charAt(1) == '2')
       turnRight(180);
   }
+}
+
+// For the last fast action, maybe move one grid
+// depending on the front middle sensor reading.
+void maybeMoveOneGrid() {
+  int distFront = getFrontMiddleRaw();
+  if (distFront > 20)
+    goForwardFast(10);
+  else if (distFront > 14)
+    goForwardHalf();
 }
 
 // combines allignFront and distanceFront function
@@ -284,6 +303,7 @@ tiltAvoidance is for 45 degree turn*/
 void sharpAvoidance() {
   while (true) {
     goForward();
+    delay(300);
     if (getFrontMiddle() == 1) {
       delay(500);
       turnLeft(90);
@@ -304,10 +324,11 @@ void sharpAvoidance() {
 void tiltAvoidance() {
   while (true) {
     goForward();
-    if (getFrontMiddle() == 1) {
+    int dist = getFrontMiddleRaw();
+    if (dist <= 30) {
       delay(500);
       turnLeft(45);
-      goForwardFast(20);
+      goForwardFast(30);
       delay(500);
       turnRight(45);
       delay(500);
@@ -315,7 +336,7 @@ void tiltAvoidance() {
       delay(500);
       turnRight(45);
       delay(500);
-      goForwardFast(20);
+      goForwardFast(30);
       delay(500);
       turnLeft(45);
     }

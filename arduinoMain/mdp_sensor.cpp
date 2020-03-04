@@ -72,7 +72,35 @@ int getLeftDistance(const ZSharpIR& sensor) {
 int getDistanceRaw(const ZSharpIR& sensor) { return sensor.distance(); }
 }  // namespace
 
+<<<<<<< HEAD
 void setupSensorsCalibration() {}
+=======
+void setupSensorsCalibration() {
+  int tablesr0c[] = {3,   457, 617, 618, 520, 440, 374, 327, 293, 263,
+                     244, 224, 209, 192, 178, 170, 159, 151, 147, 0};
+  int tablesr1c[] = {2,   355, 616, 618, 536, 452, 384, 337, 297, 271,
+                     249, 231, 206, 189, 174, 160, 148, 138, 128, 0};
+  int tablesr2c[] = {3,   346, 620, 620, 524, 439, 371, 324, 292, 263,
+                     240, 218, 202, 186, 175, 167, 160, 146, 142, 0};
+
+  int tablesr3c[] = {2,   374, 447, 563, 525, 489, 447, 408, 371, 330,
+                     300, 274, 251, 233, 213, 201, 189, 182, 166, 0};
+  // 236, 221, 205, 189, 178, 171, 0};
+
+  int tablesr4c[] = {3,   241, 576, 620, 561, 465, 397, 347, 302, 273,
+                     250, 226, 207, 191, 176, 165, 150, 143, 130, 0};
+
+  int tablesr5c[] = {3,   346, 616, 622, 564, 470, 398, 347, 306, 277,
+                     253, 230, 215, 198, 188, 176, 164, 157, 145, 0};
+
+  sr0c.ApplyCalibration(tablesr0c);
+  sr1c.ApplyCalibration(tablesr1c);
+  sr2c.ApplyCalibration(tablesr2c);
+  sr3c.ApplyCalibration(tablesr3c);
+  sr4c.ApplyCalibration(tablesr4c);
+  sr5c.ApplyCalibration(tablesr5c);
+}
+>>>>>>> master
 
 int getFrontRight() { return getFrontDistance(sr0c); }
 
@@ -99,22 +127,16 @@ int getRightFront() { return getRightDistance(sr5c); }
 int getRightFrontRaw() { return getDistanceRaw(sr5c); }
 
 void calibrateRaw() {
-  Serial.print("rf:");
-  Serial.print(getRightFront());
-  Serial.print(" rb:");
-  Serial.print(getRightBack());
+  Serial.print("fm:");
+  Serial.print(getFrontMiddle());
   Serial.print(" l:");
-  Serial.print(getLeft());
-  Serial.print("\n");
+  Serial.println(getLeft());
 
-  Serial.print("rf:");
-  Serial.print(getRightFrontRaw());
-  Serial.print(" rb:");
-  Serial.print(getRightBackRaw());
-  Serial.print(" l:");
-  Serial.print(getLeftRaw());
-  Serial.print("\n");
-  Serial.print("\n");
+  Serial.print("fmRaw:");
+  Serial.print(getFrontMiddleRaw());
+  Serial.print(" lRaw:");
+  Serial.println(getLeftRaw());
+  Serial.println();
   delay(1500);
 }
 

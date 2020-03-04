@@ -1,8 +1,7 @@
 #!/bin/bash
-
 # Sync workspace.
-rsync -avz --del arduinoMain rpi:Arduino
-
+arduino-cli compile --fqbn arduino:avr:uno arduinoMain
+rsync -avz arduinoMain rpi:Arduino/
 # Compile and upload the sketch.
-ssh rpi "cd Arduino && make upload"
+ssh rpi "source .profile && cd Arduino && arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno arduinoMain"
 
