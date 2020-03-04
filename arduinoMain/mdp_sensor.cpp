@@ -124,14 +124,14 @@ int getRightFrontRaw() { return getDistanceRaw(sr5c); }
 
 void calibrateRaw() {
   Serial.print("rf:");
-  Serial.print(getRightFront());
-  Serial.print(" rb:");
-  Serial.println(getRightBack());
-
-  Serial.print("rfRaw:");
   Serial.print(getRightFrontRaw());
-  Serial.print(" rbRaw:");
+  Serial.print(" rb:");
   Serial.println(getRightBackRaw());
+
+  Serial.print("frRaw:");
+  Serial.print(getFrontRightRaw());
+  Serial.print(" flRaw:");
+  Serial.println(getFrontLeftRaw());
   Serial.println();
   delay(1500);
 }

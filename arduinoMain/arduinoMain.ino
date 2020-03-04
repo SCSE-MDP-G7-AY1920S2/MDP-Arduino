@@ -13,9 +13,9 @@ void setup() {
   startEncoder();
   setupPID();
   setupSensorsCalibration();
-  // allignFront();
+  // alignFront();
   // calibrateSensors();
-  calibrateStart();
+  //calibrateStart();
 }
 
 void loop() {
@@ -64,7 +64,7 @@ void loop() {
         sendFin();
         break;
 
-      case 'C':  // allign robot using front and side walls.
+      case 'C':  // align robot using front and side walls.
         calibrateAll();
         sendFin();
         break;
@@ -99,7 +99,8 @@ void loop() {
 // aligns the robot against the wall
 void parallelWall() {
   // Right front further to obstacle by 1
-  int rf = getRightFrontRaw();
+  int rfOffset = 5;
+  int rf = getRightFrontRaw() + rfOffset;
   int rb = getRightBackRaw();
   int diff = rf - rb;
   int trial = 0;
@@ -112,7 +113,7 @@ void parallelWall() {
     else if (rb < rf)
       turnRight(1);
 
-    rf = getRightFrontRaw();
+    rf = getRightFrontRaw() + rfOffset;
     rb = getRightBackRaw();
     diff = rf - rb;
 
@@ -122,9 +123,10 @@ void parallelWall() {
 }
 
 // align robot to the front (angle)
-void allignFront() {
+void alignFront() {
+  int flOffset = 0;
   int fr = getFrontRightRaw();
-  int fl = getFrontLeftRaw();
+  int fl = getFrontLeftRaw() + flOffset;
   int diff = fr - fl;
   int trial = 0;
 
@@ -138,7 +140,7 @@ void allignFront() {
       turnLeft(1);
 
     fr = getFrontRightRaw();
-    fl = getFrontLeftRaw();
+    fl = getFrontLeftRaw() + flOffset;
     diff = fr - fl;
 
     trial++;
@@ -149,13 +151,13 @@ void allignFront() {
 // align robot to the wall (distance)
 void distanceFront() {
   int trial = 0;
-  int dist = 12;
+  int dist = 115;
   startMotor();
 
   while (trial < kMaxCalibrationTrial && getFrontMiddleRaw() != dist) {
-    if (getFrontRightRaw() < dist) goBackwardTicks(5);
+    if (getFrontRightRaw() < dist) goBackwardTicks(1);
 
-    if (getFrontRightRaw() > dist) goForwardTicks(5);
+    if (getFrontRightRaw() > dist) goForwardTicks(1);
 
     trial++;
   }
@@ -165,17 +167,17 @@ void distanceFront() {
 // Turns robot back to "North" position
 // when robot is facing "South".
 void southToNorth() {
-  allignFront();
+  alignFront();
   delay(100);
   distanceFront();
   delay(100);
   turnRight(90);
   delay(100);
-  allignFront();
+  alignFront();
   delay(100);
   distanceFront();
   delay(100);
-  allignFront();
+  alignFront();
   delay(100);
   turnRight(90);
 }
@@ -184,7 +186,7 @@ void southToNorth() {
 // when robot is facing "East".
 // turn right
 void eastToNorth() {
-  allignFront();
+  alignFront();
   delay(100);
   distanceFront();
   delay(100);
@@ -255,21 +257,21 @@ void maybeMoveOneGrid() {
     goForwardHalf();
 }
 
-// combines allignFront and distanceFront function
+// combines alignFront and distanceFront function
 void calibrateFront() {
-  allignFront();
+  alignFront();
   delay(100);
   distanceFront();
   delay(100);
 }
 
-// allign against front and side wall
+// align against front and side wall
 void calibrateAll() {
   parallelWall();
   delay(250);
   turnRight(90);
   delay(250);
-  allignFront();
+  alignFront();
   delay(250);
   distanceFront();
   delay(250);
@@ -278,22 +280,24 @@ void calibrateAll() {
   parallelWall();
 }
 
-// allign against side and back wall
+// align against side and back wall
 void calibrateStart() {
   turnRight(90);
-  delay(250);
-  allignFront();
-  delay(250);
+  delay(100);
+  alignFront();
+  delay(100);
   distanceFront();
-  delay(250);
+  delay(100);
   turnRight(90);
-  delay(250);
-  allignFront();
-  delay(250);
+  delay(100);
+  alignFront();
+  delay(100);
   distanceFront();
-  delay(250);
-  turnLeft(180);
-  delay(250);
+  delay(100);
+  turnLeft(90);
+  delay(100);
+  turnLeft(90);
+  delay(100);
   parallelWall();
 }
 
