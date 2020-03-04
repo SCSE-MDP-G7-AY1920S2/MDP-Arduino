@@ -194,20 +194,25 @@ void splitStringToAction(String com) {
     if (com.charAt(i) == ',') {
       command = com.substring(j, i);
       j = i + 1;
-      doFastAction(command);
+      doFastAction(command, /*lastAction=*/false);
       delay(500);
     }
   }
 
   command = com.substring(j, com.length());
-  doFastAction(command);
+  doFastAction(command, /*lastAction=*/true);
 }
 
-void doFastAction(String com) {
+void doFastAction(String com, bool lastAction) {
   if (com.charAt(0) == 'w') {
     int moveDistance = com.substring(1).toInt();
+    if (lastAction) moveDistance--;
     if (moveDistance > 0 && moveDistance <= 15) {
       goForwardFast(moveDistance * 10);
+    }
+    if (lastAction) {
+      if (moveDistance > 0) delay(500);
+      maybeMoveOneGrid();
     }
   }
 
@@ -233,6 +238,16 @@ void doFastAction(String com) {
     else if (com.charAt(1) == '2')
       turnRight(180);
   }
+}
+
+// For the last fast action, maybe move one grid
+// depending on the front middle sensor reading.
+void maybeMoveOneGrid() {
+  int distFront = getFrontMiddleRaw();
+  if (distFront > 20)
+    goForwardFast(10);
+  else if (distFront > 14)
+    goForwardHalf();
 }
 
 // combines allignFront and distanceFront function

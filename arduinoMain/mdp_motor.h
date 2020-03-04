@@ -2,6 +2,7 @@
 #define MDP_MOTOR_H_
 
 void goForward();
+void goForwardHalf();
 void goForwardFast(int cm);
 void goForwardTicks(int ticks);
 void goBackward();
