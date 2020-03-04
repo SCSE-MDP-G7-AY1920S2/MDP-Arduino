@@ -176,14 +176,13 @@ void southToNorth() {
 
 // Turns robot back to "North" position
 // when robot is facing "East".
+// turn right
 void eastToNorth() {
   allignFront();
   delay(100);
   distanceFront();
   delay(100);
-  turnLeft(90);
-  delay(100);
-  parallelWall();
+  turnRight(90);
 }
 
 
