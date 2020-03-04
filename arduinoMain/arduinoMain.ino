@@ -145,7 +145,7 @@ void allignFront() {
 // align robot to the wall (distance)
 void distanceFront() {
   int trial = 0;
-  int dist = 12;
+  int dist = 11;
   startMotor();
 
   while (trial < kMaxCalibrationTrial && getFrontMiddleRaw() != dist) {
