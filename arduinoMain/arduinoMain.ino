@@ -251,9 +251,9 @@ void doFastAction(String com, bool lastAction) {
 // depending on the front middle sensor reading.
 void maybeMoveOneGrid() {
   int distFront = getFrontMiddleRaw();
-  if (distFront > 20)
-    goForwardFast(10);
-  else if (distFront > 14)
+  if (distFront > 200)
+    goForwardFast(100);
+  else if (distFront > 140)
     goForwardHalf();
 }
 
