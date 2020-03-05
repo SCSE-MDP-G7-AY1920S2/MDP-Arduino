@@ -20,8 +20,8 @@ constexpr int kTurnSlowSpeed = 100;
 // Ticks.
 const int kTicksFast[15] = {310,  610,  905,  1207, 1513, 1807, 2103, 2400,
                             2700, 3005, 3323, 3620, 3935, 4221, 4520};
-constexpr int kMoveTicks5 = 150;
-constexpr int kMoveTicks10 = 305;
+constexpr int kMoveTicks5 = 125;
+constexpr int kMoveTicks10 = 304;
 
 constexpr int kTurnTicksL90 = 382;
 constexpr int kTurnTicksL45 = 186;
@@ -182,7 +182,7 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
 
 void goForward() { _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, ShortTurnPID); }
 
-void goForwardHalf() { _goForwardRamp(kMoveTicks5, kMoveFastSpeed, LongPID); }
+void goForwardHalf() { _goForwardTicks(kMoveTicks5, kMoveSlowSpeed, ShortTurnPID); }
 void goForwardFast(int cm) {
   int totalTicks = _cmToTicks(kTicksFast, cm);
   _goForwardRamp(totalTicks, kMoveFastSpeed, LongPID);

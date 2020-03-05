@@ -202,7 +202,7 @@ void splitStringToAction(String com) {
       command = com.substring(j, i);
       j = i + 1;
       doFastAction(command, /*lastAction=*/false);
-      delay(500);
+      delay(150);
     }
   }
 
@@ -218,7 +218,7 @@ void doFastAction(String com, bool lastAction) {
       goForwardFast(moveDistance * 10);
     }
     if (lastAction) {
-      if (moveDistance > 0) delay(500);
+      if (moveDistance > 0) delay(150);
       maybeMoveOneGrid();
     }
   }
@@ -252,7 +252,7 @@ void doFastAction(String com, bool lastAction) {
 void maybeMoveOneGrid() {
   int distFront = getFrontMiddleRaw();
   if (distFront > 200)
-    goForwardFast(100);
+    goForwardFast(10);
   else if (distFront > 140)
     goForwardHalf();
 }
