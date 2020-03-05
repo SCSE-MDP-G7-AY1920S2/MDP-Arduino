@@ -71,6 +71,7 @@ void loop() {
 
       case 'Q':  // calibrate when facing east at the start.
         calibrateStart();
+        sendFin();
         break;
 
       // Reset robot to face "North".
