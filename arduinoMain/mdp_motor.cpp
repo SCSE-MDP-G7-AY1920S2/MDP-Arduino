@@ -125,7 +125,10 @@ void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid,
       }
     }
   }
-  if (!smooth) endMotor();
+  if (!smooth)
+    endMotor();
+  else
+    md.setSpeeds(0, 0);
 }
 
 // Turn left for totalAngle in a step-by-step manner.
@@ -171,9 +174,12 @@ void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
 void _turnLeftTicks(int totalTicks, int currentSpeed, bool reverse = false) {
   shouldResetPID = true;
   _setTicks();
-  int leftSpeed = reverse ? currentSpeed : -currentSpeed;
-  int rightSpeed = reverse ? -currentSpeed : currentSpeed;
-  md.setSpeeds(leftSpeed, rightSpeed);
+  while (rightTick <= totalTicks || leftTick <= totalTicks) {
+    int leftSpeed = reverse ? currentSpeed : -currentSpeed;
+    int rightSpeed = reverse ? -currentSpeed : currentSpeed;
+    md.setSpeeds(leftSpeed, rightSpeed);
+  }
+  md.setSpeeds(0, 0);
 }
 
 int _cmToTicks(const int* ticks, int cm) {
