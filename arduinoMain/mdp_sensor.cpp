@@ -62,7 +62,7 @@ int getRightDistance(ZSharpIR& sensor) {
 int getLeftDistance(ZSharpIR& sensor) {
   int dist = round(sensor.distance() / 10.0);
   if (dist < kLRMax) {
-    int grid = (dist - kLROffset) / 10 + 1;
+    int grid = round((dist - kLROffset) / 10.0) + 1;
     return (grid > 0) ? grid : 1;
   }
   return -1;
