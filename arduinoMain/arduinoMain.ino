@@ -157,7 +157,7 @@ void alignFront() {
 // align robot to the wall (distance)
 void distanceFront() {
   int trial = 0;
-  int dist = 109;
+  int dist = 110;
   startMotor();
 
   int fm = getFrontMiddleRaw();
@@ -266,9 +266,9 @@ void maybeMoveOneGrid() {
 
 // combines alignFront and distanceFront function
 void calibrateFront() {
-  alignFront();
-  delay(100);
   distanceFront();
+  delay(100);
+  alignFront();
   delay(100);
 }
 
@@ -302,6 +302,8 @@ void calibrateStart() {
   distanceFront();
   delay(100);
   turnLeft(90);
+  delay(100);
+  distanceFront();
   delay(100);
   turnLeft(90);
   delay(100);
