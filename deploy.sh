@@ -10,5 +10,5 @@ rsync -avz arduinoMain rpi:Arduino/
 fi
 
 # Upload the sketch.
-ssh rpi "source .profile && cd Arduino && arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno arduinoMain"
+ssh rpi "source .profile && cd Arduino && arduino-cli upload -p /dev/ttyACM1 --fqbn arduino:avr:uno arduinoMain"
 
