@@ -23,12 +23,12 @@ const int kTicksFast[15] = {310,  610,  905,  1207, 1513, 1807, 2103, 2400,
 constexpr int kMoveTicks5 = 125;
 constexpr int kMoveTicks10 = 304;
 
-constexpr int kTurnTicksL90 = 382;
+constexpr int kTurnTicksL90 = 386;
 constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
 constexpr int kTurnTicksL1 = 1;
 
-constexpr int kTurnTicksR90 = 381;
+constexpr int kTurnTicksR90 = 384;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
 constexpr int kTurnTicksR1 = 1;
@@ -103,7 +103,6 @@ void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid,
     shouldResetPID = false;
   }
   _setTicks();
-  startMotor();
   int currentSpeed = baseSpeed;
 
   while (rightTick <= totalTicks || leftTick <= totalTicks) {
@@ -139,16 +138,29 @@ void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
   for (int i = 0; i < totalAngle; i += stepSize) {
     _setTicks();
     startMotor();
+    int last_tick_R = 0;
+    double startRate = 0;
     while (rightTick <= turnTicks || leftTick <= turnTicks) {
       unsigned long now = millis();
+      // Start slow and accelerate.
+      if (startRate < 1 && ((rightTick - last_tick_R) >= 10 || rightTick == 0 ||
+                            rightTick == last_tick_R)) {
+        last_tick_R = rightTick;
+        startRate += 0.03;
+      }
       if (now - lastTime >= SampleTime) {
         // rightTick as setpoint, leftTick as feedback.
         int tickOffset = pid.step(rightTick, leftTick);
+
         int leftSpeed = reverse ? (currentSpeed + tickOffset)
                                 : -(currentSpeed + tickOffset);
         int rightSpeed = reverse ? -(currentSpeed - tickOffset)
                                  : (currentSpeed - tickOffset);
-        md.setSpeeds(leftSpeed, rightSpeed);
+        if (startRate >= 1) {
+          md.setSpeeds(leftSpeed, rightSpeed);
+        } else {
+          md.setSpeeds(startRate * leftSpeed, startRate * rightSpeed);
+        }
         lastTime = now;
       }
     }
@@ -159,7 +171,6 @@ void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
 void _turnLeftTicks(int totalTicks, int currentSpeed, bool reverse = false) {
   shouldResetPID = true;
   _setTicks();
-  startMotor();
   int leftSpeed = reverse ? currentSpeed : -currentSpeed;
   int rightSpeed = reverse ? -currentSpeed : currentSpeed;
   md.setSpeeds(leftSpeed, rightSpeed);
@@ -198,6 +209,7 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
 void goForward() { _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, ShortTurnPID); }
 
 void goForwardHalf() {
+  startMotor();
   _goForwardTicks(kMoveTicks5, kMoveSlowSpeed, ShortTurnPID);
 }
 void goForwardFast(int cm) {

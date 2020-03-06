@@ -4,7 +4,7 @@
 String toSend = "";
 String command = "";
 
-const int kMaxCalibrationTrial = 11;
+const int kMaxCalibrationTrial = 15;
 bool DEBUG = false;
 
 void setup() {
@@ -130,23 +130,23 @@ void parallelWall() {
 
 // align robot to the front (angle)
 void alignFront() {
-  int flOffset = 0;
-  int fr = getFrontRightRaw();
-  int fl = getFrontLeftRaw() + flOffset;
+  int frOffset = 0;
+  int fr = getFrontRightRaw() + frOffset;
+  int fl = getFrontLeftRaw();
   int diff = fr - fl;
   int trial = 0;
 
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && abs(diff) > 2) {
+  while (trial < kMaxCalibrationTrial && abs(diff) > 3) {
     if (fl > fr)
       turnRightTicks(1);
 
     else if (fr > fl)
       turnLeftTicks(1);
 
-    fr = getFrontRightRaw();
-    fl = getFrontLeftRaw() + flOffset;
+    fr = getFrontRightRaw() + frOffset;
+    fl = getFrontLeftRaw();
     diff = fr - fl;
 
     trial++;
@@ -157,13 +157,15 @@ void alignFront() {
 // align robot to the wall (distance)
 void distanceFront() {
   int trial = 0;
-  int dist = 115;
+  int dist = 109;
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && getFrontMiddleRaw() != dist) {
-    if (getFrontRightRaw() < dist) goBackwardTicks(1);
+  int fm = getFrontMiddleRaw();
+  while (trial < kMaxCalibrationTrial && abs(fm - dist) > 1) {
+    if (fm < dist) goBackwardTicks(1);
 
-    if (getFrontRightRaw() > dist) goForwardTicks(1);
+    if (fm > dist) goForwardTicks(1);
+    fm = getFrontMiddleRaw();
 
     trial++;
   }
