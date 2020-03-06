@@ -12,10 +12,10 @@ namespace {
 // Speed config.
 constexpr int kMoveFastSpeed = 370;
 constexpr int kMoveSlowSpeed = 320;
-constexpr int kMoveTickSpeed = 100;
+constexpr int kMoveTickSpeed = 70;
 constexpr int kTurnFastSpeed = 300;
 constexpr int kTurnNormalSpeed = 280;
-constexpr int kTurnSlowSpeed = 100;
+constexpr int kTurnSlowSpeed = 70;
 
 // Ticks.
 const int kTicksFast[15] = {310,  610,  905,  1207, 1513, 1807, 2103, 2400,
@@ -97,7 +97,7 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
 }
 
 void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid,
-                     bool reverse = false) {
+                     bool reverse = false, bool smooth = false) {
   if (shouldResetPID) {
     pid.clear();
     shouldResetPID = false;
@@ -107,25 +107,32 @@ void _goForwardTicks(int totalTicks, int baseSpeed, FastPID& pid,
   int currentSpeed = baseSpeed;
 
   while (rightTick <= totalTicks || leftTick <= totalTicks) {
-    unsigned long now = millis();
-    if (now - lastTime >= SampleTime) {
-      // rightTick as setpoint, leftTick as feedback.
-      int tickOffset = pid.step(rightTick, leftTick);
-      int leftSpeed =
-          reverse ? -(currentSpeed + tickOffset) : (currentSpeed + tickOffset);
-      int rightSpeed =
-          reverse ? -(currentSpeed - tickOffset) : (currentSpeed - tickOffset);
+    if (smooth) {
+      // Smooth movement (less than 10 ticks) will not involve PID controller
+      int leftSpeed = reverse ? -currentSpeed : currentSpeed;
+      int rightSpeed = reverse ? -currentSpeed : currentSpeed;
       md.setSpeeds(leftSpeed, rightSpeed);
-      lastTime = now;
+    } else {
+      unsigned long now = millis();
+      if (now - lastTime >= SampleTime) {
+        // rightTick as setpoint, leftTick as feedback.
+        int tickOffset = pid.step(rightTick, leftTick);
+        int leftSpeed = reverse ? -(currentSpeed + tickOffset)
+                                : (currentSpeed + tickOffset);
+        int rightSpeed = reverse ? -(currentSpeed - tickOffset)
+                                 : (currentSpeed - tickOffset);
+        md.setSpeeds(leftSpeed, rightSpeed);
+        lastTime = now;
+      }
     }
   }
-  endMotor();
+  if (!smooth) endMotor();
 }
 
 // Turn left for totalAngle in a step-by-step manner.
 // stepSize is angles to turn for each step, and turnTicks is
 // the number of ticks for the specified stepSize.
-void _turnLeftTicks(int totalAngle, int stepSize, int turnTicks,
+void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
                     int currentSpeed, FastPID& pid, bool reverse = false) {
   pid.clear();
   shouldResetPID = true;
@@ -145,9 +152,17 @@ void _turnLeftTicks(int totalAngle, int stepSize, int turnTicks,
         lastTime = now;
       }
     }
-    delay(5);
   }
   endMotor();
+}
+
+void _turnLeftTicks(int totalTicks, int currentSpeed, bool reverse = false) {
+  shouldResetPID = true;
+  _setTicks();
+  startMotor();
+  int leftSpeed = reverse ? currentSpeed : -currentSpeed;
+  int rightSpeed = reverse ? -currentSpeed : currentSpeed;
+  md.setSpeeds(leftSpeed, rightSpeed);
 }
 
 int _cmToTicks(const int* ticks, int cm) {
@@ -182,14 +197,17 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
 
 void goForward() { _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, ShortTurnPID); }
 
-void goForwardHalf() { _goForwardTicks(kMoveTicks5, kMoveSlowSpeed, ShortTurnPID); }
+void goForwardHalf() {
+  _goForwardTicks(kMoveTicks5, kMoveSlowSpeed, ShortTurnPID);
+}
 void goForwardFast(int cm) {
   int totalTicks = _cmToTicks(kTicksFast, cm);
   _goForwardRamp(totalTicks, kMoveFastSpeed, LongPID);
 }
 
 void goForwardTicks(int ticks) {
-  _goForwardTicks(ticks, kMoveTickSpeed, ShortTurnPID);
+  _goForwardTicks(ticks, kMoveTickSpeed, ShortTurnPID, /*reverse=*/false,
+                  /*smooth=*/true);
 }
 
 void goBackward() {
@@ -202,39 +220,45 @@ void goBackwardFast(int cm) {
 }
 
 void goBackwardTicks(int ticks) {
-  _goForwardTicks(ticks, kMoveTickSpeed, ShortTurnPID, /*reverse=*/true);
+  _goForwardTicks(ticks, kMoveTickSpeed, ShortTurnPID, /*reverse=*/true,
+                  /*smooth=*/true);
 }
 
 void turnLeft(int angle) {
   if (angle >= 90 && angle % 90 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/90, kTurnTicksL90, kTurnFastSpeed,
+    _turnLeftAngle(angle, /*stepSize=*/90, kTurnTicksL90, kTurnFastSpeed,
                    ShortTurnPID);
   else if (angle % 45 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/45, kTurnTicksL45, kTurnNormalSpeed,
+    _turnLeftAngle(angle, /*stepSize=*/45, kTurnTicksL45, kTurnNormalSpeed,
                    ShortTurnPID);
   else if (angle % 10 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/10, kTurnTicksL10, kTurnNormalSpeed,
+    _turnLeftAngle(angle, /*stepSize=*/10, kTurnTicksL10, kTurnNormalSpeed,
                    ShortTurnPID);
   else
-    _turnLeftTicks(angle, /*stepSize=*/1, kTurnTicksL1, kTurnSlowSpeed,
+    _turnLeftAngle(angle, /*stepSize=*/1, kTurnTicksL1, kTurnSlowSpeed,
                    ShortTurnPID);
 }
 
 void turnRight(int angle) {
   if (angle >= 90 && angle % 90 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/90, kTurnTicksR90, kTurnFastSpeed,
+    _turnLeftAngle(angle, /*stepSize=*/90, kTurnTicksR90, kTurnFastSpeed,
                    ShortTurnPID, /*reverse=*/true);
   else if (angle % 45 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/45, kTurnTicksR45, kTurnNormalSpeed,
+    _turnLeftAngle(angle, /*stepSize=*/45, kTurnTicksR45, kTurnNormalSpeed,
                    ShortTurnPID, /*reverse=*/true);
   else if (angle % 10 == 0)
-    _turnLeftTicks(angle, /*stepSize=*/10, kTurnTicksR10, kTurnNormalSpeed,
+    _turnLeftAngle(angle, /*stepSize=*/10, kTurnTicksR10, kTurnNormalSpeed,
                    ShortTurnPID, /*reverse=*/true);
   else
-    _turnLeftTicks(angle, /*stepSize=*/1, kTurnTicksR1, kTurnSlowSpeed,
+    _turnLeftAngle(angle, /*stepSize=*/1, kTurnTicksR1, kTurnSlowSpeed,
                    ShortTurnPID, /*reverse=*/true);
 }
 
+void turnLeftTicks(int ticks) { _turnLeftTicks(ticks, kTurnSlowSpeed); }
+
+void turnRightTicks(int ticks) {
+  _turnLeftTicks(ticks, kTurnSlowSpeed, /*reverse=*/true);
+}
 // Ramp down version of turnLeft. Used for checklist.
 void turnLeftRamp(int angle) { _turnRamp(angle, turnLeft); }
 

@@ -5,6 +5,7 @@ String toSend = "";
 String command = "";
 
 const int kMaxCalibrationTrial = 11;
+bool DEBUG = false;
 
 void setup() {
   // put your setup code here, to run once:
@@ -15,7 +16,7 @@ void setup() {
   setupSensorsCalibration();
   // alignFront();
   // calibrateSensors();
-  //calibrateStart();
+  // calibrateStart();
 }
 
 void loop() {
@@ -28,6 +29,10 @@ void loop() {
     switch (message.charAt(0)) {
       case 'K':  // send sensor values.
         sendSensor();
+        break;
+
+      case 'B':  // toggle debug mode.
+        DEBUG = !DEBUG;
         break;
 
       case 'W':  // exploration move front.
@@ -109,10 +114,10 @@ void parallelWall() {
 
   while (trial < kMaxCalibrationTrial && abs(diff) > 2) {
     if (rf < rb)
-      turnLeft(1);
+      turnLeftTicks(1);
 
     else if (rb < rf)
-      turnRight(1);
+      turnRightTicks(1);
 
     rf = getRightFrontRaw() + rfOffset;
     rb = getRightBackRaw();
@@ -135,10 +140,10 @@ void alignFront() {
 
   while (trial < kMaxCalibrationTrial && abs(diff) > 2) {
     if (fl > fr)
-      turnRight(1);
+      turnRightTicks(1);
 
     else if (fr > fl)
-      turnLeft(1);
+      turnLeftTicks(1);
 
     fr = getFrontRightRaw();
     fl = getFrontLeftRaw() + flOffset;
@@ -193,7 +198,6 @@ void eastToNorth() {
   delay(100);
   turnRight(90);
 }
-
 
 // Split fast actions string into separate actions.
 void splitStringToAction(String com) {
@@ -348,9 +352,32 @@ void tiltAvoidance() {
   }
 }
 
+String getSensorRaw() {
+  String rawJson = "{\"fr\":";
+  rawJson.concat(getFrontRightRaw());
+
+  rawJson.concat(",\"fl\":");
+  rawJson.concat(getFrontLeftRaw());
+
+  rawJson.concat(",\"fm\":");
+  rawJson.concat(getFrontMiddleRaw());
+
+  rawJson.concat(",\"left\":");
+  rawJson.concat(getLeftRaw());
+
+  rawJson.concat(",\"rf\":");
+  rawJson.concat(getRightFrontRaw());
+
+  rawJson.concat(",\"rb\":");
+  rawJson.concat(getRightBackRaw());
+  rawJson.concat("}");
+
+  return rawJson;
+}
+
 // send sensor data
 void sendSensor() {
-  delay(50);
+  // delay(50);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"SD\",\"fr\":";
   toSend.concat(getFrontRight());
 
@@ -362,15 +389,18 @@ void sendSensor() {
 
   toSend.concat(",\"left\":");
   toSend.concat(getLeft());
-  // toSend.concat("-1");
 
   toSend.concat(",\"rf\":");
   toSend.concat(getRightFront());
-  // toSend.concat("-1");
 
   toSend.concat(",\"rb\":");
   toSend.concat(getRightBack());
-  // toSend.concat("-1");
+
+  if (DEBUG) {
+    toSend.concat(",\"raw\":");
+    toSend.concat(getSensorRaw());
+  }
+
   toSend.concat("}");
 
   Serial.println(toSend);
