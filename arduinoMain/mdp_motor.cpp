@@ -42,9 +42,9 @@ unsigned long lastTime = millis();
 bool shouldResetPID = false;
 FastPID ShortTurnPID(/*kp=*/16.8, /*ki=*/7.7, /*kd=*/0,
                      /*hz=*/200, /*bits=*/16, /*sign=*/true);
-FastPID LongPID(/*kp=*/7.5, /*ki=*/3.15, /*kd=*/0.001,
+FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
                 /*hz=*/200, /*bits=*/16, /*sign=*/true);
-
+// 6.7
 // Interrupt driven tick counts.
 volatile int rightTick = 0;
 volatile int leftTick = 0;
@@ -85,9 +85,9 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
       // rightTick as setpoint, leftTick as feedback.
       int tickOffset = pid.step(rightTick, leftTick);
       if (startRate >= 1) {
-        md.setSpeeds(currentSpeed + tickOffset, currentSpeed - tickOffset);
+        md.setSpeeds(currentSpeed + tickOffset / 2, currentSpeed - tickOffset);
       } else {
-        md.setM1Speed(startRate * (currentSpeed + tickOffset));
+        md.setM1Speed(startRate * (currentSpeed + tickOffset / 2));
         md.setM2Speed(startRate * (currentSpeed - tickOffset));
       }
       lastTime = now;
@@ -313,5 +313,5 @@ void startMotor() {
 void endMotor() {
   md.setSpeeds(0, 0);
   md.setBrakes(400, 400);
-  delay(50);
+  // delay(50);
 }
