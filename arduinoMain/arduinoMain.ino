@@ -266,9 +266,9 @@ void maybeMoveOneGrid() {
 
 // combines alignFront and distanceFront function
 void calibrateFront() {
-  alignFront();
-  delay(100);
   distanceFront();
+  delay(100);
+  alignFront();
   delay(100);
 }
 
