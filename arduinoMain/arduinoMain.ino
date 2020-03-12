@@ -38,21 +38,25 @@ void loop() {
       case 'W':  // exploration move front.
         goForward();
         // sendSensor();
+        sendFin();
         break;
 
       case 'S':  // exploration move back.
         goBackward();
         // sendSensor();
+        sendFin();
         break;
 
       case 'A':  // exploration turn left.
         turnLeft(90);
         // sendSensor();
+        sendFin();
         break;
 
       case 'D':  // exploration turn right.
         turnRight(90);
         // sendSensor();
+        sendFin();
         break;
 
       case 'E':  // exploration end.
@@ -373,7 +377,7 @@ String getSensorRaw() {
 
 // send sensor data
 void sendSensor() {
-  // delay(50);
+  delay(50);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"SD\",\"fr\":";
   toSend.concat(getFrontRight());
 
