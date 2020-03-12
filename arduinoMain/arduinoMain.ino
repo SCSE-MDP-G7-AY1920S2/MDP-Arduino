@@ -37,26 +37,22 @@ void loop() {
 
       case 'W':  // exploration move front.
         goForward();
-        //sendSensor();
-        sendFin();
+        // sendSensor();
         break;
 
       case 'S':  // exploration move back.
         goBackward();
-        //sendSensor();
-        sendFin();
+        // sendSensor();
         break;
 
       case 'A':  // exploration turn left.
         turnLeft(90);
-        //sendSensor();
-        sendFin();
+        // sendSensor();
         break;
 
       case 'D':  // exploration turn right.
         turnRight(90);
-        //sendSensor();
-        sendFin();
+        // sendSensor();
         break;
 
       case 'E':  // exploration end.
