@@ -40,7 +40,7 @@ ZSharpIR sr3c(s3, LRmodel, /*m=*/4.8193e+04, /*b=*/250.7146, /*k=*/46.2362);
 
 // return distance from sensors (grids).
 int getFrontDistance(const ZSharpIR& sensor) {
-  int dist = sensor.distance();
+  int dist = round(sensor.distance() / 10.0);
   if (dist < kFrontBorderGrid1)
     return 1;
   else if (dist < kFrontBorderGrid2)
@@ -49,7 +49,7 @@ int getFrontDistance(const ZSharpIR& sensor) {
 }
 
 int getRightDistance(const ZSharpIR& sensor) {
-  int dist = sensor.distance();
+  int dist = round(sensor.distance() / 10.0);
   bool isRightBack = sensor.getIrPin() == s4;
   if (dist < kRightBorderGrid1)
     return 1;
@@ -60,9 +60,9 @@ int getRightDistance(const ZSharpIR& sensor) {
 }
 
 int getLeftDistance(const ZSharpIR& sensor) {
-  int dist = sensor.distance();
+  int dist = round(sensor.distance() / 10.0);
   if (dist < kLRMax) {
-    int grid = (dist - kLROffset) / 10 + 1;
+    int grid = (dist - kLROffset) / 10.0 + 1;
     return (grid > 0) ? grid : 1;
   }
   return -1;
@@ -99,15 +99,15 @@ int getRightFront() { return getRightDistance(sr5c); }
 int getRightFrontRaw() { return getDistanceRaw(sr5c); }
 
 void calibrateRaw() {
-  Serial.print("fm:");
-  Serial.print(getFrontMiddle());
-  Serial.print(" l:");
-  Serial.println(getLeft());
+  Serial.print("rf:");
+  Serial.print(getRightFrontRaw());
+  Serial.print(" rb:");
+  Serial.println(getRightBackRaw());
 
-  Serial.print("fmRaw:");
-  Serial.print(getFrontMiddleRaw());
-  Serial.print(" lRaw:");
-  Serial.println(getLeftRaw());
+  Serial.print("frRaw:");
+  Serial.print(getFrontRightRaw());
+  Serial.print(" flRaw:");
+  Serial.println(getFrontLeftRaw());
   Serial.println();
   delay(1500);
 }

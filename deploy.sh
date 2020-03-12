@@ -1,7 +1,13 @@
 #!/bin/bash
-# Sync workspace.
+# Compile the sketch locally.
 arduino-cli compile --fqbn arduino:avr:uno arduinoMain
-rsync -avz arduinoMain rpi:Arduino/
-# Compile and upload the sketch.
-ssh rpi "source .profile && cd Arduino && arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno arduinoMain"
 
+# Sync workspace.
+if [[ "$OSTYPE" == "msys" ]]; then
+scp -r arduinoMain rpi:Arduino/
+else
+rsync -avz arduinoMain rpi:Arduino/
+fi
+
+# Upload the sketch.
+ssh rpi "source .profile && cd Arduino && arduino-cli upload -p /dev/ttyACM0 --fqbn arduino:avr:uno arduinoMain"

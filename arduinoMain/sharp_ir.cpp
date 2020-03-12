@@ -45,5 +45,5 @@ int ZSharpIR::compute(int ir_val) const {
   else if (model_ == GP2Y0A02YK0F && ir_val < kLRVMin)
     ir_val = kLRVMin;
   double distanceCM = m_ / (ir_val + b_) - k_;
-  return round(distanceCM);
+  return round(distanceCM * 10);
 }

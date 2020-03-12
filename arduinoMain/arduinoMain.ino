@@ -4,7 +4,8 @@
 String toSend = "";
 String command = "";
 
-const int kMaxCalibrationTrial = 11;
+const int kMaxCalibrationTrial = 15;
+bool DEBUG = false;
 
 void setup() {
   // put your setup code here, to run once:
@@ -13,9 +14,9 @@ void setup() {
   startEncoder();
   setupPID();
   setupSensorsCalibration();
-  // allignFront();
+  // alignFront();
   // calibrateSensors();
-  calibrateStart();
+  // calibrateStart();
 }
 
 void loop() {
@@ -30,24 +31,32 @@ void loop() {
         sendSensor();
         break;
 
+      case 'B':  // toggle debug mode.
+        DEBUG = !DEBUG;
+        break;
+
       case 'W':  // exploration move front.
         goForward();
-        sendSensor();
+        // sendSensor();
+        sendFin();
         break;
 
       case 'S':  // exploration move back.
         goBackward();
-        sendSensor();
+        // sendSensor();
+        sendFin();
         break;
 
       case 'A':  // exploration turn left.
         turnLeft(90);
-        sendSensor();
+        // sendSensor();
+        sendFin();
         break;
 
       case 'D':  // exploration turn right.
         turnRight(90);
-        sendSensor();
+        // sendSensor();
+        sendFin();
         break;
 
       case 'E':  // exploration end.
@@ -64,22 +73,28 @@ void loop() {
         sendFin();
         break;
 
-      case 'C':  // allign robot using front and side walls.
+      case 'C':  // align robot using front and side walls.
         calibrateAll();
         sendFin();
         break;
 
       case 'Q':  // calibrate when facing east at the start.
         calibrateStart();
+        delay(500);
+        calibrateStart();
+        sendFin();
         break;
 
-      // Reset robot to face "North".
+      // turn 180
       case 'G':
         southToNorth();
+        sendFin();
         break;
 
+      // turn right 90
       case 'H':
         eastToNorth();
+        sendFin();
         break;
 
       // Fast actions.
@@ -99,20 +114,21 @@ void loop() {
 // aligns the robot against the wall
 void parallelWall() {
   // Right front further to obstacle by 1
-  int rf = getRightFrontRaw();
+  int rfOffset = 5;
+  int rf = getRightFrontRaw() + rfOffset;
   int rb = getRightBackRaw();
   int diff = rf - rb;
   int trial = 0;
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && abs(diff) > 0) {
+  while (trial < kMaxCalibrationTrial && abs(diff) > 2) {
     if (rf < rb)
-      turnLeft(1);
+      turnLeftTicks(1);
 
     else if (rb < rf)
-      turnRight(1);
+      turnRightTicks(1);
 
-    rf = getRightFrontRaw();
+    rf = getRightFrontRaw() + rfOffset;
     rb = getRightBackRaw();
     diff = rf - rb;
 
@@ -122,22 +138,23 @@ void parallelWall() {
 }
 
 // align robot to the front (angle)
-void allignFront() {
-  int fr = getFrontRightRaw();
+void alignFront() {
+  int frOffset = 0;
+  int fr = getFrontRightRaw() + frOffset;
   int fl = getFrontLeftRaw();
   int diff = fr - fl;
   int trial = 0;
 
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && abs(diff) != 0) {
+  while (trial < kMaxCalibrationTrial && abs(diff) > 3) {
     if (fl > fr)
-      turnRight(1);
+      turnRightTicks(1);
 
     else if (fr > fl)
-      turnLeft(1);
+      turnLeftTicks(1);
 
-    fr = getFrontRightRaw();
+    fr = getFrontRightRaw() + frOffset;
     fl = getFrontLeftRaw();
     diff = fr - fl;
 
@@ -149,48 +166,38 @@ void allignFront() {
 // align robot to the wall (distance)
 void distanceFront() {
   int trial = 0;
-  int dist = 12;
+  int dist = 110;
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && getFrontMiddleRaw() != dist) {
-    if (getFrontRightRaw() < dist) goBackwardTicks(5);
+  int fm = getFrontMiddleRaw();
+  while (trial < kMaxCalibrationTrial && abs(fm - dist) > 1) {
+    if (fm < dist) goBackwardTicks(1);
 
-    if (getFrontRightRaw() > dist) goForwardTicks(5);
+    if (fm > dist) goForwardTicks(1);
+    fm = getFrontMiddleRaw();
 
     trial++;
   }
   endMotor();
 }
 
-// Turns robot back to "North" position
-// when robot is facing "South".
+// turn 180
 void southToNorth() {
-  allignFront();
-  delay(100);
-  distanceFront();
+  calibrateFront();
   delay(100);
   turnRight(90);
   delay(100);
-  allignFront();
-  delay(100);
-  distanceFront();
-  delay(100);
-  allignFront();
+  calibrateFront();
   delay(100);
   turnRight(90);
 }
 
-// Turns robot back to "North" position
-// when robot is facing "East".
-// turn right
+// turn right 90
 void eastToNorth() {
-  allignFront();
-  delay(100);
-  distanceFront();
+  calibrateFront();
   delay(100);
   turnRight(90);
 }
-
 
 // Split fast actions string into separate actions.
 void splitStringToAction(String com) {
@@ -200,7 +207,7 @@ void splitStringToAction(String com) {
       command = com.substring(j, i);
       j = i + 1;
       doFastAction(command, /*lastAction=*/false);
-      delay(500);
+      delay(150);
     }
   }
 
@@ -216,7 +223,7 @@ void doFastAction(String com, bool lastAction) {
       goForwardFast(moveDistance * 10);
     }
     if (lastAction) {
-      if (moveDistance > 0) delay(500);
+      if (moveDistance > 0) delay(150);
       maybeMoveOneGrid();
     }
   }
@@ -249,51 +256,53 @@ void doFastAction(String com, bool lastAction) {
 // depending on the front middle sensor reading.
 void maybeMoveOneGrid() {
   int distFront = getFrontMiddleRaw();
-  if (distFront > 20)
+  if (distFront > 200)
     goForwardFast(10);
-  else if (distFront > 14)
+  else if (distFront > 140)
     goForwardHalf();
 }
 
-// combines allignFront and distanceFront function
+// combines alignFront and distanceFront function
 void calibrateFront() {
-  allignFront();
-  delay(100);
   distanceFront();
+  delay(100);
+  alignFront();
   delay(100);
 }
 
-// allign against front and side wall
+// align against front and side wall
 void calibrateAll() {
-  parallelWall();
-  delay(250);
+  calibrateFront();
+  delay(100);
   turnRight(90);
-  delay(250);
-  allignFront();
-  delay(250);
-  distanceFront();
-  delay(250);
+  delay(100);
+  calibrateFront();
+  delay(100);
   turnLeft(90);
-  delay(250);
+  delay(100);
   parallelWall();
 }
 
-// allign against side and back wall
+// align against side and back wall
 void calibrateStart() {
   turnRight(90);
-  delay(250);
-  allignFront();
-  delay(250);
+  delay(100);
+  alignFront();
+  delay(100);
   distanceFront();
-  delay(250);
+  delay(100);
   turnRight(90);
-  delay(250);
-  allignFront();
-  delay(250);
+  delay(100);
+  alignFront();
+  delay(100);
   distanceFront();
-  delay(250);
-  turnLeft(180);
-  delay(250);
+  delay(100);
+  turnLeft(90);
+  delay(100);
+  distanceFront();
+  delay(100);
+  turnLeft(90);
+  delay(100);
   parallelWall();
 }
 
@@ -343,6 +352,29 @@ void tiltAvoidance() {
   }
 }
 
+String getSensorRaw() {
+  String rawJson = "{\"fr\":";
+  rawJson.concat(getFrontRightRaw());
+
+  rawJson.concat(",\"fl\":");
+  rawJson.concat(getFrontLeftRaw());
+
+  rawJson.concat(",\"fm\":");
+  rawJson.concat(getFrontMiddleRaw());
+
+  rawJson.concat(",\"left\":");
+  rawJson.concat(getLeftRaw());
+
+  rawJson.concat(",\"rf\":");
+  rawJson.concat(getRightFrontRaw());
+
+  rawJson.concat(",\"rb\":");
+  rawJson.concat(getRightBackRaw());
+  rawJson.concat("}");
+
+  return rawJson;
+}
+
 // send sensor data
 void sendSensor() {
   delay(50);
@@ -357,15 +389,18 @@ void sendSensor() {
 
   toSend.concat(",\"left\":");
   toSend.concat(getLeft());
-  // toSend.concat("-1");
 
   toSend.concat(",\"rf\":");
   toSend.concat(getRightFront());
-  // toSend.concat("-1");
 
   toSend.concat(",\"rb\":");
   toSend.concat(getRightBack());
-  // toSend.concat("-1");
+
+  if (DEBUG) {
+    toSend.concat(",\"raw\":");
+    toSend.concat(getSensorRaw());
+  }
+
   toSend.concat("}");
 
   Serial.println(toSend);
@@ -373,6 +408,7 @@ void sendSensor() {
 }
 
 void sendFin() {
+  delay(50);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"C\"}";
 
   Serial.println(toSend);
