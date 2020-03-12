@@ -274,21 +274,21 @@ void maybeMoveOneGrid() {
 // combines alignFront and distanceFront function
 void calibrateFront() {
   distanceFront();
-  delay(50);
+  delay(100);
   alignFront();
-  delay(50);
+  delay(100);
 }
 
 // align against front and side wall
 void calibrateAll() {
   calibrateFront();
-  delay(50);
+  delay(100);
   turnRight(90);
-  delay(50);
+  delay(100);
   calibrateFront();
-  delay(50);
+  delay(100);
   turnLeft(90);
-  delay(50);
+  delay(100);
   parallelWall();
 }
 
