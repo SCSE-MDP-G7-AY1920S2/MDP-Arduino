@@ -166,7 +166,7 @@ void alignFront() {
 // align robot to the wall (distance)
 void distanceFront() {
   int trial = 0;
-  int dist = 115;
+  int dist = 110;
   startMotor();
 
   int fm = getFrontMiddleRaw();
@@ -408,6 +408,7 @@ void sendSensor() {
 }
 
 void sendFin() {
+  delay(50);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"C\"}";
 
   Serial.println(toSend);
