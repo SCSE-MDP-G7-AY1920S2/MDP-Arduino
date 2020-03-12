@@ -80,10 +80,12 @@ void loop() {
         break;
 
       // Reset robot to face "North".
+      // 1 left turn
       case 'G':
         southToNorth();
         break;
 
+      // 2 left turn
       case 'H':
         eastToNorth();
         break;
@@ -174,31 +176,36 @@ void distanceFront() {
 
 // Turns robot back to "North" position
 // when robot is facing "South".
+// "G" - 1 left turn
 void southToNorth() {
-  alignFront();
-  delay(100);
-  distanceFront();
+  calibrateFront();
   delay(100);
   turnRight(90);
   delay(100);
-  alignFront();
+  calibrateFront();
   delay(100);
-  distanceFront();
+  turnLeft(90);
   delay(100);
-  alignFront();
+  calibrateFront();
   delay(100);
-  turnRight(90);
+  turnLeft(90);
+  delay(100);
+  parallelWall();
 }
 
 // Turns robot back to "North" position
 // when robot is facing "East".
-// turn right
+// "H" - 2 left turn
 void eastToNorth() {
-  alignFront();
+  calibrateFront();
   delay(100);
-  distanceFront();
+  turnLeft(90);
   delay(100);
-  turnRight(90);
+  calibrateFront();
+  delay(100);
+  turnLeft(90);
+  delay(100);
+  parallelWall();
 }
 
 // Split fast actions string into separate actions.
@@ -267,23 +274,21 @@ void maybeMoveOneGrid() {
 // combines alignFront and distanceFront function
 void calibrateFront() {
   distanceFront();
-  delay(100);
+  delay(50);
   alignFront();
-  delay(100);
+  delay(50);
 }
 
 // align against front and side wall
 void calibrateAll() {
-  parallelWall();
-  delay(250);
+  calibrateFront();
+  delay(50);
   turnRight(90);
-  delay(250);
-  alignFront();
-  delay(250);
-  distanceFront();
-  delay(250);
+  delay(50);
+  calibrateFront();
+  delay(50);
   turnLeft(90);
-  delay(250);
+  delay(50);
   parallelWall();
 }
 
@@ -291,19 +296,15 @@ void calibrateAll() {
 void calibrateStart() {
   turnRight(90);
   delay(100);
-  alignFront();
-  delay(100);
-  distanceFront();
+  calibrateFront();
   delay(100);
   turnRight(90);
   delay(100);
-  alignFront();
-  delay(100);
-  distanceFront();
+  calibrateFront();
   delay(100);
   turnLeft(90);
   delay(100);
-  distanceFront();
+  calibrateFront();
   delay(100);
   turnLeft(90);
   delay(100);
