@@ -37,22 +37,26 @@ void loop() {
 
       case 'W':  // exploration move front.
         goForward();
-        sendSensor();
+        //sendSensor();
+        sendFin();
         break;
 
       case 'S':  // exploration move back.
         goBackward();
-        sendSensor();
+        //sendSensor();
+        sendFin();
         break;
 
       case 'A':  // exploration turn left.
         turnLeft(90);
-        sendSensor();
+        //sendSensor();
+        sendFin();
         break;
 
       case 'D':  // exploration turn right.
         turnRight(90);
-        sendSensor();
+        //sendSensor();
+        sendFin();
         break;
 
       case 'E':  // exploration end.
@@ -76,18 +80,21 @@ void loop() {
 
       case 'Q':  // calibrate when facing east at the start.
         calibrateStart();
+        delay(500);
+        calibrateStart();
         sendFin();
         break;
 
-      // Reset robot to face "North".
-      // 1 left turn
+      // turn 180
       case 'G':
         southToNorth();
+        sendFin();
         break;
 
-      // 2 left turn
+      // turn right 90
       case 'H':
         eastToNorth();
+        sendFin();
         break;
 
       // Fast actions.
@@ -159,7 +166,7 @@ void alignFront() {
 // align robot to the wall (distance)
 void distanceFront() {
   int trial = 0;
-  int dist = 110;
+  int dist = 115;
   startMotor();
 
   int fm = getFrontMiddleRaw();
@@ -174,9 +181,7 @@ void distanceFront() {
   endMotor();
 }
 
-// Turns robot back to "North" position
-// when robot is facing "South".
-// "G" - 1 left turn
+// turn 180
 void southToNorth() {
   calibrateFront();
   delay(100);
@@ -184,28 +189,14 @@ void southToNorth() {
   delay(100);
   calibrateFront();
   delay(100);
-  turnLeft(90);
-  delay(100);
-  calibrateFront();
-  delay(100);
-  turnLeft(90);
-  delay(100);
-  parallelWall();
+  turnRight(90);
 }
 
-// Turns robot back to "North" position
-// when robot is facing "East".
-// "H" - 2 left turn
+// turn right 90
 void eastToNorth() {
   calibrateFront();
   delay(100);
-  turnLeft(90);
-  delay(100);
-  calibrateFront();
-  delay(100);
-  turnLeft(90);
-  delay(100);
-  parallelWall();
+  turnRight(90);
 }
 
 // Split fast actions string into separate actions.
@@ -296,15 +287,19 @@ void calibrateAll() {
 void calibrateStart() {
   turnRight(90);
   delay(100);
-  calibrateFront();
+  alignFront();
+  delay(100);
+  distanceFront();
   delay(100);
   turnRight(90);
   delay(100);
-  calibrateFront();
+  alignFront();
+  delay(100);
+  distanceFront();
   delay(100);
   turnLeft(90);
   delay(100);
-  calibrateFront();
+  distanceFront();
   delay(100);
   turnLeft(90);
   delay(100);
