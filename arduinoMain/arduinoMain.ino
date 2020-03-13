@@ -171,7 +171,7 @@ void alignFront() {
 // align robot to the wall (distance)
 void distanceFront(bool isBlock) {
   int trial = 0;
-  int dist = isBlock ? 120 : 110;
+  int dist = isBlock ? 115 : 110;
   startMotor();
 
   int fm = getFrontMiddleRaw();
@@ -382,7 +382,6 @@ String getSensorRaw() {
 
 // send sensor data
 void sendSensor() {
-  delay(50);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"SD\",\"fr\":";
   toSend.concat(getFrontRight());
 
