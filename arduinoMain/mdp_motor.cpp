@@ -70,6 +70,7 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
   int currentSpeed = baseSpeed;
   int last_tick_R = 0;
   double startRate = 0;
+  int skewOffset = (baseSpeed == kMoveFastSpeed) ? 2 : 1;
 
   while (rightTick <= totalTicks || leftTick <= totalTicks) {
     unsigned long now = millis();
@@ -85,9 +86,9 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
       // rightTick as setpoint, leftTick as feedback.
       int tickOffset = pid.step(rightTick, leftTick);
       if (startRate >= 1) {
-        md.setSpeeds(currentSpeed + tickOffset / 2, currentSpeed - tickOffset);
+        md.setSpeeds(currentSpeed + tickOffset / skewOffset, currentSpeed - tickOffset);
       } else {
-        md.setM1Speed(startRate * (currentSpeed + tickOffset / 2));
+        md.setM1Speed(startRate * (currentSpeed + tickOffset / skewOffset));
         md.setM2Speed(startRate * (currentSpeed - tickOffset));
       }
       lastTime = now;
