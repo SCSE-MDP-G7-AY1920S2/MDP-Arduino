@@ -63,8 +63,13 @@ void loop() {
         sendFin();
         break;
 
-      case 'F':  // calibrate front.
-        calibrateFront();
+      case 'F':  // calibrate front for wall.
+        calibrateFront(/*isBlock=*/false);
+        sendFin();
+        break;
+
+      case 'f':  // calibrate front for block.
+        calibrateFront(/*isBlock=*/true);
         sendFin();
         break;
 
@@ -164,9 +169,9 @@ void alignFront() {
 }
 
 // align robot to the wall (distance)
-void distanceFront() {
+void distanceFront(bool isBlock) {
   int trial = 0;
-  int dist = 110;
+  int dist = isBlock ? 115 : 110;
   startMotor();
 
   int fm = getFrontMiddleRaw();
@@ -183,18 +188,18 @@ void distanceFront() {
 
 // turn 180
 void southToNorth() {
-  calibrateFront();
+  calibrateFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
   delay(100);
-  calibrateFront();
+  calibrateFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
 }
 
 // turn right 90
 void eastToNorth() {
-  calibrateFront();
+  calibrateFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
 }
@@ -263,8 +268,8 @@ void maybeMoveOneGrid() {
 }
 
 // combines alignFront and distanceFront function
-void calibrateFront() {
-  distanceFront();
+void calibrateFront(bool isBlock) {
+  distanceFront(isBlock);
   delay(100);
   alignFront();
   delay(100);
@@ -272,11 +277,11 @@ void calibrateFront() {
 
 // align against front and side wall
 void calibrateAll() {
-  calibrateFront();
+  calibrateFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
   delay(100);
-  calibrateFront();
+  calibrateFront(/*isBlock=*/false);
   delay(100);
   turnLeft(90);
   delay(100);
@@ -289,17 +294,17 @@ void calibrateStart() {
   delay(100);
   alignFront();
   delay(100);
-  distanceFront();
+  distanceFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
   delay(100);
   alignFront();
   delay(100);
-  distanceFront();
+  distanceFront(/*isBlock=*/false);
   delay(100);
   turnLeft(90);
   delay(100);
-  distanceFront();
+  distanceFront(/*isBlock=*/false);
   delay(100);
   turnLeft(90);
   delay(100);
