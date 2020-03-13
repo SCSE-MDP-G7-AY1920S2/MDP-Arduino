@@ -171,9 +171,9 @@ void distanceFront() {
 
   int fm = getFrontMiddleRaw();
   while (trial < kMaxCalibrationTrial && abs(fm - dist) > 1) {
-    if (fm < dist) goBackwardTicks(1);
+    if (fm < dist) goBackwardTicks(2);
 
-    if (fm > dist) goForwardTicks(1);
+    if (fm > dist) goForwardTicks(2);
     fm = getFrontMiddleRaw();
 
     trial++;
@@ -408,7 +408,7 @@ void sendSensor() {
 }
 
 void sendFin() {
-  delay(50);
+  // delay(50);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"C\"}";
 
   Serial.println(toSend);
