@@ -11,7 +11,7 @@
 namespace {
 // Speed config.
 constexpr int kMoveFastSpeed = 370;
-constexpr int kMoveSlowSpeed = 350;
+constexpr int kMoveSlowSpeed = 360;
 constexpr int kMoveTickSpeed = 70;
 constexpr int kTurnFastSpeed = 300;
 constexpr int kTurnNormalSpeed = 280;
@@ -70,7 +70,7 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
   int currentSpeed = baseSpeed;
   int last_tick_R = 0;
   double startRate = 0;
-  int skewOffset = (baseSpeed == kMoveFastSpeed) ? 1.875 : 1.25;
+  int skewOffset = (baseSpeed == kMoveFastSpeed) ? 1.875 : 1.5;
 
   while (rightTick <= totalTicks || leftTick <= totalTicks) {
     unsigned long now = millis();
