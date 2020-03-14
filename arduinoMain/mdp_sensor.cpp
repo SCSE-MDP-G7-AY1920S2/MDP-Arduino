@@ -1,8 +1,9 @@
 #include "mdp_sensor.h"
 
 #include <Arduino.h>
+#include <ZSharpIR.h>
 
-#include "sharp_ir.h"
+#include "cf_sharp_ir.h"
 
 // Model Number for IR sensors.
 #define SRmodel 1080
@@ -29,17 +30,17 @@ constexpr int kLROffset = 16;
 
 // short IR sensor
 // c - calibrated
-ZSharpIR sr0c(s0, SRmodel, /*m=*/5.8027e+03, /*b=*/5.7073, /*k=*/3.2186);
-ZSharpIR sr1c(s1, SRmodel, /*m=*/7.0216e+03, /*b=*/36.6182, /*k=*/4.5791);
-ZSharpIR sr2c(s2, SRmodel, /*m=*/5.8207e+03, /*b=*/10.7342, /*k=*/3.1259);
-ZSharpIR sr4c(s4, SRmodel, /*m=*/6.5677e+03, /*b=*/18.9407, /*k=*/3.7055);
-ZSharpIR sr5c(s5, SRmodel, /*m=*/7.5070e+03, /*b=*/41.9073, /*k=*/5.0008);
+CFSharpIR sr0c(s0, SRmodel, /*m=*/5.8027e+03, /*b=*/5.7073, /*k=*/3.2186);
+CFSharpIR sr1c(s1, SRmodel, /*m=*/7.0216e+03, /*b=*/36.6182, /*k=*/4.5791);
+CFSharpIR sr2c(s2, SRmodel, /*m=*/5.8207e+03, /*b=*/10.7342, /*k=*/3.1259);
+CFSharpIR sr4c(s4, SRmodel, /*m=*/6.5677e+03, /*b=*/18.9407, /*k=*/3.7055);
+CFSharpIR sr5c(s5, SRmodel, /*m=*/7.5070e+03, /*b=*/41.9073, /*k=*/5.0008);
 
 // long IR sensor
-ZSharpIR sr3c(s3, LRmodel, /*m=*/4.8193e+04, /*b=*/250.7146, /*k=*/46.2362);
+ZSharpIR sr3c(s3, LRmodel);
 
 // return distance from sensors (grids).
-int getFrontDistance(const ZSharpIR& sensor) {
+int getFrontDistance(const CFSharpIR& sensor) {
   int dist = round(sensor.distance() / 10.0);
   if (dist < kFrontBorderGrid1)
     return 1;
@@ -48,7 +49,7 @@ int getFrontDistance(const ZSharpIR& sensor) {
   return -1;
 }
 
-int getRightDistance(const ZSharpIR& sensor) {
+int getRightDistance(const CFSharpIR& sensor) {
   int dist = round(sensor.distance() / 10.0);
   bool isRightBack = sensor.getIrPin() == s4;
   if (dist < kRightBorderGrid1)
@@ -59,7 +60,7 @@ int getRightDistance(const ZSharpIR& sensor) {
   return -1;
 }
 
-int getLeftDistance(const ZSharpIR& sensor) {
+int getLeftDistance(ZSharpIR& sensor) {
   int dist = round(sensor.distance() / 10.0);
   if (dist < kLRMax) {
     int grid = (dist - kLROffset) / 10.0 + 1;
@@ -69,10 +70,14 @@ int getLeftDistance(const ZSharpIR& sensor) {
 }
 
 // return distance from sensors (cm).
-int getDistanceRaw(const ZSharpIR& sensor) { return sensor.distance(); }
+int getDistanceRaw(const CFSharpIR& sensor) { return sensor.distance(); }
 }  // namespace
 
-void setupSensorsCalibration() {}
+void setupSensorsCalibration() {
+    int tablesr3c[] = {2,   374, 447, 563, 525, 489, 447, 408, 371, 330,
+                     300, 274, 251, 233, 213, 201, 189, 182, 166, 0};
+    sr3c.ApplyCalibration(tablesr3c);
+}
 
 int getFrontRight() { return getFrontDistance(sr0c); }
 
@@ -88,7 +93,7 @@ int getFrontLeftRaw() { return getDistanceRaw(sr2c); }
 
 int getLeft() { return getLeftDistance(sr3c); }
 
-int getLeftRaw() { return getDistanceRaw(sr3c); }
+int getLeftRaw() { return sr3c.distance(); }
 
 int getRightBack() { return getRightDistance(sr4c); }
 

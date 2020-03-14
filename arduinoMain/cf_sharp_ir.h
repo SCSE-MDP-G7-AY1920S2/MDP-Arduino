@@ -1,12 +1,12 @@
-#ifndef SHARP_IR_H_
-#define SHARP_IR_H_
+#ifndef CF_SHARP_IR_H_
+#define CF_SHARP_IR_H_
 
 #include <Arduino.h>
 
 // A lightweight SharpIR library for calibrated sensors.
-class ZSharpIR {
+class CFSharpIR {
  public:
-  ZSharpIR(int ir_pin, const uint32_t sensor_type, double m, double b,
+  CFSharpIR(int ir_pin, const uint32_t sensor_type, double m, double b,
            double k);
   static const uint32_t GP2Y0A21YK0F = 1080;
   static const uint32_t GP2Y0A02YK0F = 20150;
@@ -21,4 +21,4 @@ class ZSharpIR {
   int compute(int ir_val) const;
 };
 
-#endif  // SHARP_IR_H_
+#endif  // CF_SHARP_IR_H_
