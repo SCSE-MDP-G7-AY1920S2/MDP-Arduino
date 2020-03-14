@@ -17,6 +17,19 @@ constexpr int kTurnFastSpeed = 300;
 constexpr int kTurnNormalSpeed = 280;
 constexpr int kTurnSlowSpeed = 70;
 
+// PID setup.
+const unsigned SampleTime = 5;
+unsigned long lastTime = millis();
+bool shouldResetPID = false;
+FastPID ShortTurnPID(/*kp=*/16.8, /*ki=*/7.7, /*kd=*/0,
+                     /*hz=*/200, /*bits=*/16, /*sign=*/true);
+FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
+                /*hz=*/200, /*bits=*/16, /*sign=*/true);
+
+// PID adjustments.
+constexpr double kSkewOffsetSlow = 1.5;
+constexpr double kSkewOffsetFast = 1.875;
+
 // Ticks.
 const int kTicksFast[15] = {302,  610,  905,  1207, 1513, 1807, 2103, 2400,
                             2700, 3005, 3323, 3620, 3935, 4221, 4520};
@@ -36,15 +49,6 @@ constexpr int kTurnTicksR1 = 1;
 // Motor Driver shield.
 DualVNH5019MotorShield md;
 
-// PID setup.
-const unsigned SampleTime = 5;
-unsigned long lastTime = millis();
-bool shouldResetPID = false;
-FastPID ShortTurnPID(/*kp=*/16.8, /*ki=*/7.7, /*kd=*/0,
-                     /*hz=*/200, /*bits=*/16, /*sign=*/true);
-FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
-                /*hz=*/200, /*bits=*/16, /*sign=*/true);
-// 6.7
 // Interrupt driven tick counts.
 volatile int rightTick = 0;
 volatile int leftTick = 0;
@@ -60,7 +64,7 @@ void _setTicks() {
 
 // Move forward for the number of totalTicks. Start slow and gradually increase
 // speed until baseSpeed, and reduce speed when approaching totalTicks.
-void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
+void _goForwardRamp(int totalTicks, int baseSpeed, double skewOffset, FastPID& pid) {
   if (shouldResetPID) {
     pid.clear();
     shouldResetPID = false;
@@ -70,7 +74,6 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
   int currentSpeed = baseSpeed;
   int last_tick_R = 0;
   double startRate = 0;
-  int skewOffset = (baseSpeed == kMoveFastSpeed) ? 1.875 : 1.5;
 
   while (rightTick <= totalTicks || leftTick <= totalTicks) {
     unsigned long now = millis();
@@ -203,7 +206,7 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
 }
 }  // namespace
 
-void goForward() { _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, ShortTurnPID); }
+void goForward() { _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, kSkewOffsetSlow, ShortTurnPID); }
 
 void goForwardHalf() {
   startMotor();
@@ -211,7 +214,7 @@ void goForwardHalf() {
 }
 void goForwardFast(int cm) {
   int totalTicks = _cmToTicks(kTicksFast, cm);
-  _goForwardRamp(totalTicks, kMoveFastSpeed, LongPID);
+  _goForwardRamp(totalTicks, kMoveFastSpeed, kSkewOffsetFast, LongPID);
 }
 
 void goForwardTicks(int ticks) {
