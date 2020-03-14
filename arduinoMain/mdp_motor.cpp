@@ -27,6 +27,8 @@ FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
                 /*hz=*/200, /*bits=*/16, /*sign=*/true);
 
 // PID adjustments.
+// slanted left -> reduce offset; slanted right -> increase offset.
+// if skewOffset is below 1, PID need to be re-configured.
 constexpr double kSkewOffsetSlow = 1.5;
 constexpr double kSkewOffsetFast = 1.875;
 
