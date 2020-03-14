@@ -28,7 +28,7 @@ void loop() {
 
     switch (message.charAt(0)) {
       case 'K':  // send sensor values.
-        sendSensor();
+        sendSensor("SD");
         break;
 
       case 'B':  // toggle debug mode.
@@ -37,34 +37,35 @@ void loop() {
 
       case 'W':  // exploration move front.
         goForward();
-        // sendSensor();
-        sendFin();
+        sendSensor("MF");
         break;
 
       case 'S':  // exploration move back.
         goBackward();
-        // sendSensor();
-        sendFin();
+        sendSensor("MF");
         break;
 
       case 'A':  // exploration turn left.
         turnLeft(90);
-        // sendSensor();
-        sendFin();
+        sendSensor("MF");
         break;
 
       case 'D':  // exploration turn right.
         turnRight(90);
-        // sendSensor();
-        sendFin();
+        sendSensor("MF");
         break;
 
       case 'E':  // exploration end.
         sendFin();
         break;
 
-      case 'F':  // calibrate front.
-        calibrateFront();
+      case 'F':  // calibrate front for wall.
+        calibrateFront(/*isBlock=*/false);
+        sendFin();
+        break;
+
+      case 'f':  // calibrate front for block.
+        calibrateFront(/*isBlock=*/true);
         sendFin();
         break;
 
@@ -164,16 +165,16 @@ void alignFront() {
 }
 
 // align robot to the wall (distance)
-void distanceFront() {
+void distanceFront(bool isBlock) {
   int trial = 0;
-  int dist = 110;
+  int dist = isBlock ? 115 : 110;
   startMotor();
 
   int fm = getFrontMiddleRaw();
   while (trial < kMaxCalibrationTrial && abs(fm - dist) > 1) {
-    if (fm < dist) goBackwardTicks(1);
+    if (fm < dist) goBackwardTicks(2);
 
-    if (fm > dist) goForwardTicks(1);
+    if (fm > dist) goForwardTicks(2);
     fm = getFrontMiddleRaw();
 
     trial++;
@@ -183,18 +184,18 @@ void distanceFront() {
 
 // turn 180
 void southToNorth() {
-  calibrateFront();
+  calibrateFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
   delay(100);
-  calibrateFront();
+  calibrateFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
 }
 
 // turn right 90
 void eastToNorth() {
-  calibrateFront();
+  calibrateFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
 }
@@ -263,8 +264,8 @@ void maybeMoveOneGrid() {
 }
 
 // combines alignFront and distanceFront function
-void calibrateFront() {
-  distanceFront();
+void calibrateFront(bool isBlock) {
+  distanceFront(isBlock);
   delay(100);
   alignFront();
   delay(100);
@@ -272,11 +273,11 @@ void calibrateFront() {
 
 // align against front and side wall
 void calibrateAll() {
-  calibrateFront();
+  calibrateFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
   delay(100);
-  calibrateFront();
+  calibrateFront(/*isBlock=*/false);
   delay(100);
   turnLeft(90);
   delay(100);
@@ -289,17 +290,17 @@ void calibrateStart() {
   delay(100);
   alignFront();
   delay(100);
-  distanceFront();
+  distanceFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
   delay(100);
   alignFront();
   delay(100);
-  distanceFront();
+  distanceFront(/*isBlock=*/false);
   delay(100);
   turnLeft(90);
   delay(100);
-  distanceFront();
+  distanceFront(/*isBlock=*/false);
   delay(100);
   turnLeft(90);
   delay(100);
@@ -376,9 +377,9 @@ String getSensorRaw() {
 }
 
 // send sensor data
-void sendSensor() {
-  delay(50);
-  toSend = ";{\"from\":\"Arduino\",\"com\":\"SD\",\"fr\":";
+void sendSensor(String comType) {
+  toSend = ";{\"from\":\"Arduino\",\"com\":\"" + comType + "\"";
+  toSend.concat(",\"fr\":");
   toSend.concat(getFrontRight());
 
   toSend.concat(",\"fl\":");
@@ -408,7 +409,7 @@ void sendSensor() {
 }
 
 void sendFin() {
-  delay(50);
+  // delay(50);
   toSend = ";{\"from\":\"Arduino\",\"com\":\"C\"}";
 
   Serial.println(toSend);

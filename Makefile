@@ -4,7 +4,7 @@ flags = --fqbn
 port = /dev/ttyACM0
 
 board_infix = $(subst :,.,$(board))
-src = $(sketch)/$(sketch).ino $(wildcard $(sketch)/*.cpp) $(wildcard $(sketch)/*.h)
+src = $(wildcard $(sketch)/*.ino) $(wildcard $(sketch)/*.cpp) $(wildcard $(sketch)/*.h)
 targets = $(addprefix $(sketch)/$(sketch).$(board_infix),.hex .with_bootloader.hex .elf)
 
 all : $(targets)

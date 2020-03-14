@@ -11,30 +11,11 @@
 namespace {
 // Speed config.
 constexpr int kMoveFastSpeed = 370;
-constexpr int kMoveSlowSpeed = 320;
+constexpr int kMoveSlowSpeed = 360;
 constexpr int kMoveTickSpeed = 70;
 constexpr int kTurnFastSpeed = 300;
 constexpr int kTurnNormalSpeed = 280;
 constexpr int kTurnSlowSpeed = 70;
-
-// Ticks.
-const int kTicksFast[15] = {310,  610,  905,  1207, 1513, 1807, 2103, 2400,
-                            2700, 3005, 3323, 3620, 3935, 4221, 4520};
-constexpr int kMoveTicks5 = 125;
-constexpr int kMoveTicks10 = 304;
-
-constexpr int kTurnTicksL90 = 386;
-constexpr int kTurnTicksL45 = 186;
-constexpr int kTurnTicksL10 = 28;
-constexpr int kTurnTicksL1 = 1;
-
-constexpr int kTurnTicksR90 = 384;
-constexpr int kTurnTicksR45 = 186;
-constexpr int kTurnTicksR10 = 28;
-constexpr int kTurnTicksR1 = 1;
-
-// Motor Driver shield.
-DualVNH5019MotorShield md;
 
 // PID setup.
 const unsigned SampleTime = 5;
@@ -44,7 +25,30 @@ FastPID ShortTurnPID(/*kp=*/16.8, /*ki=*/7.7, /*kd=*/0,
                      /*hz=*/200, /*bits=*/16, /*sign=*/true);
 FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
                 /*hz=*/200, /*bits=*/16, /*sign=*/true);
-// 6.7
+
+// PID adjustments.
+constexpr double kSkewOffsetSlow = 1.5;
+constexpr double kSkewOffsetFast = 1.875;
+
+// Ticks.
+const int kTicksFast[15] = {302,  610,  905,  1207, 1513, 1807, 2103, 2400,
+                            2700, 3005, 3323, 3620, 3935, 4221, 4520};
+constexpr int kMoveTicks5 = 125;
+constexpr int kMoveTicks10 = 302;
+
+constexpr int kTurnTicksL90 = 397;
+constexpr int kTurnTicksL45 = 186;
+constexpr int kTurnTicksL10 = 28;
+constexpr int kTurnTicksL1 = 1;
+
+constexpr int kTurnTicksR90 = 391;
+constexpr int kTurnTicksR45 = 186;
+constexpr int kTurnTicksR10 = 28;
+constexpr int kTurnTicksR1 = 1;
+
+// Motor Driver shield.
+DualVNH5019MotorShield md;
+
 // Interrupt driven tick counts.
 volatile int rightTick = 0;
 volatile int leftTick = 0;
@@ -60,7 +64,7 @@ void _setTicks() {
 
 // Move forward for the number of totalTicks. Start slow and gradually increase
 // speed until baseSpeed, and reduce speed when approaching totalTicks.
-void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
+void _goForwardRamp(int totalTicks, int baseSpeed, double skewOffset, FastPID& pid) {
   if (shouldResetPID) {
     pid.clear();
     shouldResetPID = false;
@@ -85,9 +89,9 @@ void _goForwardRamp(int totalTicks, int baseSpeed, FastPID& pid) {
       // rightTick as setpoint, leftTick as feedback.
       int tickOffset = pid.step(rightTick, leftTick);
       if (startRate >= 1) {
-        md.setSpeeds(currentSpeed + tickOffset / 2, currentSpeed - tickOffset);
+        md.setSpeeds(currentSpeed + tickOffset / skewOffset, currentSpeed - tickOffset);
       } else {
-        md.setM1Speed(startRate * (currentSpeed + tickOffset / 2));
+        md.setM1Speed(startRate * (currentSpeed + tickOffset / skewOffset));
         md.setM2Speed(startRate * (currentSpeed - tickOffset));
       }
       lastTime = now;
@@ -141,16 +145,10 @@ void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
   for (int i = 0; i < totalAngle; i += stepSize) {
     _setTicks();
     startMotor();
-    int last_tick_R = 0;
-    double startRate = 0;
     while (rightTick <= turnTicks || leftTick <= turnTicks) {
       unsigned long now = millis();
-      // Start slow and accelerate.
-      if (startRate < 1 && ((rightTick - last_tick_R) >= 10 || rightTick == 0 ||
-                            rightTick == last_tick_R)) {
-        last_tick_R = rightTick;
-        startRate += 0.03;
-      }
+      // Reduce speed at the end of the turn.
+      if (turnTicks - rightTick < 80) currentSpeed = 150;
       if (now - lastTime >= SampleTime) {
         // rightTick as setpoint, leftTick as feedback.
         int tickOffset = pid.step(rightTick, leftTick);
@@ -159,11 +157,7 @@ void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
                                 : -(currentSpeed + tickOffset);
         int rightSpeed = reverse ? -(currentSpeed - tickOffset)
                                  : (currentSpeed - tickOffset);
-        if (startRate >= 1) {
-          md.setSpeeds(leftSpeed, rightSpeed);
-        } else {
-          md.setSpeeds(startRate * leftSpeed, startRate * rightSpeed);
-        }
+        md.setSpeeds(leftSpeed, rightSpeed);
         lastTime = now;
       }
     }
@@ -212,7 +206,7 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
 }
 }  // namespace
 
-void goForward() { _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, ShortTurnPID); }
+void goForward() { _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, kSkewOffsetSlow, ShortTurnPID); }
 
 void goForwardHalf() {
   startMotor();
@@ -220,7 +214,7 @@ void goForwardHalf() {
 }
 void goForwardFast(int cm) {
   int totalTicks = _cmToTicks(kTicksFast, cm);
-  _goForwardRamp(totalTicks, kMoveFastSpeed, LongPID);
+  _goForwardRamp(totalTicks, kMoveFastSpeed, kSkewOffsetFast, LongPID);
 }
 
 void goForwardTicks(int ticks) {
