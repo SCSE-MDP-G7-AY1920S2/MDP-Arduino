@@ -115,14 +115,14 @@ void loop() {
 // aligns the robot against the wall
 void parallelWall() {
   // Right front further to obstacle by 1
-  int rfOffset = 5;
+  int rfOffset = -5;
   int rf = getRightFrontRaw() + rfOffset;
   int rb = getRightBackRaw();
   int diff = rf - rb;
   int trial = 0;
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && abs(diff) > 2) {
+  while (trial < kMaxCalibrationTrial && abs(diff) > 1) {
     if (rf < rb)
       turnLeftTicks(1);
 
@@ -148,7 +148,7 @@ void alignFront() {
 
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && abs(diff) > 3) {
+  while (trial < kMaxCalibrationTrial && abs(diff) > 1) {
     if (fl > fr)
       turnRightTicks(1);
 
