@@ -28,7 +28,7 @@ constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
 constexpr int kTurnTicksL1 = 1;
 
-constexpr int kTurnTicksR90 = 391;
+constexpr int kTurnTicksR90 = 393;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
 constexpr int kTurnTicksR1 = 1;
