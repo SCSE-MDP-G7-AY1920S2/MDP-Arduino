@@ -28,7 +28,7 @@ void loop() {
 
     switch (message.charAt(0)) {
       case 'K':  // send sensor values.
-        sendSensor();
+        sendSensor("SD");
         break;
 
       case 'B':  // toggle debug mode.
@@ -37,26 +37,22 @@ void loop() {
 
       case 'W':  // exploration move front.
         goForward();
-        // sendSensor();
-        sendFin();
+        sendSensor("MF");
         break;
 
       case 'S':  // exploration move back.
         goBackward();
-        // sendSensor();
-        sendFin();
+        sendSensor("MF");
         break;
 
       case 'A':  // exploration turn left.
         turnLeft(90);
-        // sendSensor();
-        sendFin();
+        sendSensor("MF");
         break;
 
       case 'D':  // exploration turn right.
         turnRight(90);
-        // sendSensor();
-        sendFin();
+        sendSensor("MF");
         break;
 
       case 'E':  // exploration end.
@@ -381,8 +377,9 @@ String getSensorRaw() {
 }
 
 // send sensor data
-void sendSensor() {
-  toSend = ";{\"from\":\"Arduino\",\"com\":\"SD\",\"fr\":";
+void sendSensor(String comType) {
+  toSend = ";{\"from\":\"Arduino\",\"com\":\"" + comType + "\"";
+  toSend.concat(",\"fr\":");
   toSend.concat(getFrontRight());
 
   toSend.concat(",\"fl\":");
