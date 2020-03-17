@@ -210,10 +210,14 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
 
 void goForward() { _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, kSkewOffsetSlow, ShortTurnPID); }
 
+<<<<<<< Updated upstream
 void goForwardHalf() {
   startMotor();
   _goForwardTicks(kMoveTicks5, kMoveSlowSpeed, ShortTurnPID);
 }
+=======
+void goForwardHalf() { _goForwardTicks(kMoveTicks5, kMoveFastSpeed, LongPID); }
+>>>>>>> Stashed changes
 void goForwardFast(int cm) {
   int totalTicks = _cmToTicks(kTicksFast, cm);
   _goForwardRamp(totalTicks, kMoveFastSpeed, kSkewOffsetFast, LongPID);
