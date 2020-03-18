@@ -10,7 +10,7 @@
 
 namespace {
 // Speed config.
-constexpr int kMoveFastSpeed = 370;
+constexpr int kMoveFastSpeed = 385;
 constexpr int kMoveSlowSpeed = 360;
 constexpr int kMoveTickSpeed = 70;
 constexpr int kTurnFastSpeed = 300;
@@ -29,14 +29,14 @@ FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
 // PID adjustments.
 // slanted left -> reduce offset; slanted right -> increase offset.
 // if skewOffset is below 1, PID need to be re-configured.
-constexpr double kSkewOffsetSlow = 1.5;
-constexpr double kSkewOffsetFast = 1.875;
+constexpr double kSkewOffsetSlow = 1.85;
+constexpr double kSkewOffsetFast = 2.1;
 
 // Ticks.
-const int kTicksFast[15] = {302,  610,  905,  1207, 1513, 1807, 2103, 2400,
+const int kTicksFast[15] = {302,  610,  905,  1207, 1500, 1807, 2103, 2400,
                             2700, 3005, 3323, 3620, 3935, 4221, 4520};
 constexpr int kMoveTicks5 = 125;
-constexpr int kMoveTicks10 = 307;
+constexpr int kMoveTicks10 = 305;
 
 constexpr int kTurnTicksL90 = 399;
 constexpr int kTurnTicksL45 = 186;

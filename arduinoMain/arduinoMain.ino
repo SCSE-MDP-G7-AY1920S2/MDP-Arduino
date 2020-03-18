@@ -15,8 +15,10 @@ void setup() {
   setupPID();
   setupSensorsCalibration();
   // alignFront();
-  // calibrateSensors();
-  // calibrateStart();
+  delay(500);
+  calibrateStart();
+  delay(1000);
+  goForwardFast(90);
 }
 
 void loop() {
@@ -167,7 +169,7 @@ void alignFront() {
 // align robot to the wall (distance)
 void distanceFront(bool isBlock) {
   int trial = 0;
-  int dist = isBlock ? 115 : 110;
+  int dist = isBlock ? 115 : 114;
   startMotor();
 
   int fm = getFrontMiddleRaw();
