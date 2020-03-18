@@ -35,19 +35,18 @@ jobs:
           arduino-cli core update-index
           arduino-cli core install arduino:avr
       
-      # Install official libraries from the arduino
-      - name: Install libraries
-        uses: arduino/actions/libraries/compile-examples@master
-        with:
-          fqbn: 'arduino:avr:uno'
-          libraries: "DualVNH5019MotorShield EnableInterrupt"
-      
-      # Install custom libraries
+      - name: Install official libraries
+        run: |
+          arduino-cli lib install DualVNH5019MotorShield@3.0.0
+          arduino-cli lib install EnableInterrupt@1.1.0
+
+      # Install custom libraries 
       - uses: actions/checkout@v2
         with:
           repository: mike-matera/FastPID
           ref: "v1.3.2"
           path: "$HOME/Arduino/libraries"
+
       - uses: actions/checkout@v2
         with:
           repository: hengkaiz/ZSharpIR
