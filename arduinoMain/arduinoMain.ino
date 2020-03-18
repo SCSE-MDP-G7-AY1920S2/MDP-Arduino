@@ -15,10 +15,6 @@ void setup() {
   setupPID();
   setupSensorsCalibration();
   // alignFront();
-  delay(500);
-  calibrateStart();
-  delay(1000);
-  goForwardFast(90);
 }
 
 void loop() {
