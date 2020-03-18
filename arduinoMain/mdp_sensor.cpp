@@ -25,7 +25,7 @@ constexpr int kRightFrontBorderGrid2 = 26;
 constexpr int kRightBackBorderGrid2 = 25;
 
 constexpr int kLRMax = 64;
-constexpr int kLROffset = 16;
+constexpr int kLROffset = 9;
 
 // short IR sensor
 // c - calibrated
