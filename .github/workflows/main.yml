@@ -39,18 +39,12 @@ jobs:
         run: |
           arduino-cli lib install DualVNH5019MotorShield@3.0.0
           arduino-cli lib install EnableInterrupt@1.1.0
-
-      # Install custom libraries 
-      - uses: actions/checkout@v2
-        with:
-          repository: mike-matera/FastPID
-          ref: "v1.3.2"
-          run: mv FastPID $HOME/Arduino/libraries
-
-      - uses: actions/checkout@v2
-        with:
-          repository: hengkaiz/ZSharpIR
-          run: mv ZSharpIR $HOME/Arduino/libraries
+          
+      - name: Install custom libraries
+        run: |
+          cd $HOME/Arduino/libraries
+          git clone -b v1.3.2 https://github.com/mike-matera/FastPID.git
+          git clone https://github.com/hengkaiz/ZSharpIR.git
         
       # Finally, we compile the sketch, using the FQBN that was set
       # in the build matrix.
