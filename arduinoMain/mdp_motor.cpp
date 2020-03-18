@@ -66,7 +66,8 @@ void _setTicks() {
 
 // Move forward for the number of totalTicks. Start slow and gradually increase
 // speed until baseSpeed, and reduce speed when approaching totalTicks.
-void _goForwardRamp(int totalTicks, int baseSpeed, double skewOffset, FastPID& pid) {
+void _goForwardRamp(int totalTicks, int baseSpeed, double skewOffset,
+                    FastPID& pid) {
   if (shouldResetPID) {
     pid.clear();
     shouldResetPID = false;
@@ -91,7 +92,8 @@ void _goForwardRamp(int totalTicks, int baseSpeed, double skewOffset, FastPID& p
       // rightTick as setpoint, leftTick as feedback.
       int tickOffset = pid.step(rightTick, leftTick);
       if (startRate >= 1) {
-        md.setSpeeds(currentSpeed + tickOffset / skewOffset, currentSpeed - tickOffset);
+        md.setSpeeds(currentSpeed + tickOffset / skewOffset,
+                     currentSpeed - tickOffset);
       } else {
         md.setM1Speed(startRate * (currentSpeed + tickOffset / skewOffset));
         md.setM2Speed(startRate * (currentSpeed - tickOffset));
@@ -208,16 +210,14 @@ void _turnRamp(int angle, void (*turnFunc)(int)) {
 }
 }  // namespace
 
-void goForward() { _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, kSkewOffsetSlow, ShortTurnPID); }
+void goForward() {
+  _goForwardRamp(kMoveTicks10, kMoveSlowSpeed, kSkewOffsetSlow, ShortTurnPID);
+}
 
-<<<<<<< Updated upstream
 void goForwardHalf() {
   startMotor();
   _goForwardTicks(kMoveTicks5, kMoveSlowSpeed, ShortTurnPID);
 }
-=======
-void goForwardHalf() { _goForwardTicks(kMoveTicks5, kMoveFastSpeed, LongPID); }
->>>>>>> Stashed changes
 void goForwardFast(int cm) {
   int totalTicks = _cmToTicks(kTicksFast, cm);
   _goForwardRamp(totalTicks, kMoveFastSpeed, kSkewOffsetFast, LongPID);
