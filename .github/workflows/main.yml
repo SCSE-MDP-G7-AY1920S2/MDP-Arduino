@@ -45,12 +45,12 @@ jobs:
         with:
           repository: mike-matera/FastPID
           ref: "v1.3.2"
-          path: "$HOME/Arduino/libraries"
+          run: mv FastPID $HOME/Arduino/libraries
 
       - uses: actions/checkout@v2
         with:
           repository: hengkaiz/ZSharpIR
-          path: "$HOME/Arduino/libraries"  
+          run: mv ZSharpIR $HOME/Arduino/libraries
         
       # Finally, we compile the sketch, using the FQBN that was set
       # in the build matrix.
