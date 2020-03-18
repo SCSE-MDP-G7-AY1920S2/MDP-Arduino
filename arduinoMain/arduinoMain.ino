@@ -14,7 +14,6 @@ void setup() {
   startEncoder();
   setupPID();
   setupSensorsCalibration();
-  // alignFront();
 }
 
 void loop() {
