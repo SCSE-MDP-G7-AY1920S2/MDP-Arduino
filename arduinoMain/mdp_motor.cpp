@@ -29,17 +29,18 @@ FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
 // PID adjustments.
 // slanted left -> reduce offset; slanted right -> increase offset.
 // if skewOffset is below 1, PID need to be re-configured.
-constexpr double kSkewOffsetSlow = 1.85;
+constexpr double kSkewOffsetSlow = 2;
 constexpr double kSkewOffsetFast = 2.1;
-constexpr double kSkewOffsetTurn = 1.5;
+constexpr double kSkewOffsetFastLong = 2.8;
+constexpr double kSkewOffsetTurn = 1.7;
 
 // Ticks.
-const int kTicksFast[15] = {302,  610,  905,  1207, 1500, 1807, 2103, 2400,
-                            2700, 3005, 3323, 3620, 3935, 4221, 4520};
+const int kTicksFast[15] = {308,  602,  905,  1202, 1498, 1800, 2098, 2400,
+                            2705, 3010, 3310, 3610, 3915, 4221, 4520};
 constexpr int kMoveTicks5 = 125;
 constexpr int kMoveTicks10 = 305;
 
-constexpr int kTurnTicksL90 = 399;
+constexpr int kTurnTicksL90 = 397;
 constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
 constexpr int kTurnTicksL1 = 1;
@@ -217,7 +218,10 @@ void goForwardHalf() {
 }
 void goForwardFast(int cm) {
   int totalTicks = _cmToTicks(kTicksFast, cm);
-  _goForwardRamp(totalTicks, kMoveFastSpeed, kSkewOffsetFast, LongPID);
+  if (cm > 110)
+    _goForwardRamp(totalTicks, kMoveFastSpeed, kSkewOffsetFastLong, LongPID);
+  else
+    _goForwardRamp(totalTicks, kMoveFastSpeed, kSkewOffsetFast, LongPID);
 }
 
 void goForwardTicks(int ticks) {
