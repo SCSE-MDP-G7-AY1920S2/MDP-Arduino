@@ -13,7 +13,7 @@ namespace {
 constexpr int kMoveFastSpeed = 385;
 constexpr int kMoveSlowSpeed = 360;
 constexpr int kMoveTickSpeed = 70;
-constexpr int kTurnFastSpeed = 300;
+constexpr int kTurnFastSpeed = 280;
 constexpr int kTurnNormalSpeed = 280;
 constexpr int kTurnSlowSpeed = 70;
 
@@ -152,7 +152,7 @@ void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
     while (rightTick <= turnTicks || leftTick <= turnTicks) {
       unsigned long now = millis();
       // Reduce speed at the end of the turn.
-      if (turnTicks - rightTick < 80) currentSpeed = 150;
+      if (turnTicks - rightTick < 80) currentSpeed = 120;
       if (now - lastTime >= SampleTime) {
         // rightTick as setpoint, leftTick as feedback.
         int tickOffset = pid.step(rightTick, leftTick);
