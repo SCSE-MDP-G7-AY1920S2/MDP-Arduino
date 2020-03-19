@@ -32,7 +32,7 @@ FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
 constexpr double kSkewOffsetSlow = 2;
 constexpr double kSkewOffsetFast = 2.1;
 constexpr double kSkewOffsetFastLong = 2.8;
-constexpr double kSkewOffsetTurn = 1.7;
+constexpr double kSkewOffsetTurn = 1.2;
 
 // Ticks.
 const int kTicksFast[15] = {308,  602,  905,  1202, 1498, 1800, 2098, 2400,
