@@ -31,6 +31,7 @@ FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
 // if skewOffset is below 1, PID need to be re-configured.
 constexpr double kSkewOffsetSlow = 1.85;
 constexpr double kSkewOffsetFast = 2.1;
+constexpr double kSkewOffsetTurn = 1.5;
 
 // Ticks.
 const int kTicksFast[15] = {302,  610,  905,  1207, 1500, 1807, 2103, 2400,
@@ -43,7 +44,7 @@ constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
 constexpr int kTurnTicksL1 = 1;
 
-constexpr int kTurnTicksR90 = 393;
+constexpr int kTurnTicksR90 = 395;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
 constexpr int kTurnTicksR1 = 1;
@@ -155,8 +156,8 @@ void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
         // rightTick as setpoint, leftTick as feedback.
         int tickOffset = pid.step(rightTick, leftTick);
 
-        int leftSpeed = reverse ? (currentSpeed + tickOffset)
-                                : -(currentSpeed + tickOffset);
+        int leftSpeed = reverse ? (currentSpeed + tickOffset / kSkewOffsetTurn)
+                                : -(currentSpeed + tickOffset / kSkewOffsetTurn);
         int rightSpeed = reverse ? -(currentSpeed - tickOffset)
                                  : (currentSpeed - tickOffset);
         md.setSpeeds(leftSpeed, rightSpeed);

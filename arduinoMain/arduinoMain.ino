@@ -5,6 +5,8 @@ String toSend = "";
 String command = "";
 
 const int kMaxCalibrationTrial = 15;
+const int kMaxCalibrationTrialInit = 30;
+bool initCalibration = false;
 bool DEBUG = false;
 
 void setup() {
@@ -79,7 +81,9 @@ void loop() {
       case 'Q':  // calibrate when facing east at the start.
         calibrateStart();
         delay(500);
+        initCalibration = true;
         calibrateStart();
+        initCalibration = false;
         sendFin();
         break;
 
@@ -117,9 +121,11 @@ void parallelWall() {
   int rb = getRightBackRaw();
   int diff = rf - rb;
   int trial = 0;
+  int maxTrial =
+      initCalibration ? kMaxCalibrationTrialInit : kMaxCalibrationTrial;
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && abs(diff) > 1) {
+  while (trial < maxTrial && abs(diff) > 1) {
     if (rf < rb)
       turnLeftTicks(1);
 
@@ -142,10 +148,12 @@ void alignFront() {
   int fl = getFrontLeftRaw();
   int diff = fr - fl;
   int trial = 0;
+  int maxTrial =
+      initCalibration ? kMaxCalibrationTrialInit : kMaxCalibrationTrial;
 
   startMotor();
 
-  while (trial < kMaxCalibrationTrial && abs(diff) > 1) {
+  while (trial < maxTrial && abs(diff) > 1) {
     if (fl > fr)
       turnRightTicks(1);
 
@@ -165,10 +173,12 @@ void alignFront() {
 void distanceFront(bool isBlock) {
   int trial = 0;
   int dist = isBlock ? 115 : 114;
+  int maxTrial =
+      initCalibration ? kMaxCalibrationTrialInit : kMaxCalibrationTrial;
   startMotor();
 
   int fm = getFrontMiddleRaw();
-  while (trial < kMaxCalibrationTrial && abs(fm - dist) > 1) {
+  while (trial < maxTrial && abs(fm - dist) > 1) {
     if (fm < dist) goBackwardTicks(2);
 
     if (fm > dist) goForwardTicks(2);
