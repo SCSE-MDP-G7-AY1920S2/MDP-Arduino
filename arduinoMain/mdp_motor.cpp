@@ -40,12 +40,12 @@ const int kTicksFast[15] = {308,  602,  905,  1202, 1498, 1800, 2098, 2400,
 constexpr int kMoveTicks5 = 125;
 constexpr int kMoveTicks10 = 305;
 
-constexpr int kTurnTicksL90 = 396;
+constexpr int kTurnTicksL90 = 398;
 constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
 constexpr int kTurnTicksL1 = 1;
 
-constexpr int kTurnTicksR90 = 395;
+constexpr int kTurnTicksR90 = 397;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
 constexpr int kTurnTicksR1 = 1;

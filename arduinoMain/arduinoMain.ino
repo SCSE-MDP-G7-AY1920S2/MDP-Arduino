@@ -229,6 +229,7 @@ void doFastAction(String com, bool lastAction) {
     if (lastAction) moveDistance--;
     if (moveDistance > 0 && moveDistance <= 15) {
       goForwardFast(moveDistance * 10);
+      isNearObstacle();
     }
     if (lastAction) {
       if (moveDistance > 0) delay(150);
@@ -268,6 +269,57 @@ void maybeMoveOneGrid() {
     goForwardFast(10);
   else if (distFront > 140)
     goForwardHalf();
+}
+
+// For faster path, aligns the robot against the obstacle
+// if front sensors are within 2 grids of any walls/ blocks
+void isNearObstacle(){
+  if(getFrontLeft() != -1 && getFrontRight() != -1){
+    int frOffset = getFrontRight() * 10;
+    int flOffset = getFrontLeft() * 10;
+    int fr = getFrontRightRaw() + frOffset;
+    int fl = getFrontLeftRaw() + flOffset;
+    int diff = fr - fl;
+    int trial = 0;
+    int maxTrial =
+        initCalibration ? kMaxCalibrationTrialInit : kMaxCalibrationTrial;
+
+    startMotor();
+
+    while (trial < maxTrial && abs(diff) > 1) {
+      if (fl > fr)
+        turnRightTicks(1);
+
+      else if (fr > fl)
+        turnLeftTicks(1);
+
+      fr = getFrontRightRaw() + frOffset;
+      fl = getFrontLeftRaw() + flOffset;
+      diff = fr - fl;
+
+      trial++;
+    }
+    endMotor();
+  }
+
+  if(getFrontMiddle() != -1){
+    int trial = 0;
+    int dist = getFrontMiddle() * 10;
+    int maxTrial =
+        initCalibration ? kMaxCalibrationTrialInit : kMaxCalibrationTrial;
+    startMotor();
+
+    int fm = getFrontMiddleRaw();
+    while (trial < maxTrial && abs(fm - dist) > 1) {
+      if (fm < dist) goBackwardTicks(2);
+
+      if (fm > dist) goForwardTicks(2);
+      fm = getFrontMiddleRaw();
+
+      trial++;
+    }
+    endMotor();
+  }
 }
 
 // combines alignFront and distanceFront function
