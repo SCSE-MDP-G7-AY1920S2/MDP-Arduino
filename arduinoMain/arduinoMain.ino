@@ -6,6 +6,7 @@ String command = "";
 
 const int kMaxCalibrationTrial = 15;
 const int kMaxCalibrationTrialInit = 30;
+const int kMaxCalibrationTrialTurn = 3;
 bool initCalibration = false;
 bool DEBUG = false;
 
@@ -82,20 +83,28 @@ void loop() {
         calibrateStart();
         delay(500);
         initCalibration = true;
+        turnRight(90);
+        adjustTurnTicks();
+        turnLeft(90);
         calibrateStart();
         initCalibration = false;
         sendFin();
         break;
 
-      // turn 180
-      case 'G':
+      case 'G': // robot come back facing south
+        initCalibration = true;
+        adjustTurnTicks();
         southToNorth();
+        initCalibration = false;
         sendFin();
         break;
 
-      // turn right 90
-      case 'H':
-        eastToNorth();
+      case 'H': // robot come back facing west
+        initCalibration = true;
+        adjustTurnTicks();
+        turnLeft(90);
+        southToNorth();
+        initCalibration = false;
         sendFin();
         break;
 
@@ -187,6 +196,47 @@ void distanceFront(bool isBlock) {
     trial++;
   }
   endMotor();
+}
+
+// Adjust the turn ticks based on fl and fr sensor readings.
+// This function assusmes that the robot is facing a wall.
+void adjustTurnTicks() {
+  int fl, fr;
+  int trial = 0;
+  calibrateFront(/*isBlock=*/false);
+  do {
+    for(int i = 0; i < 4; i++) {
+      turnLeft(90);
+      delay(100);
+    }
+    delay(300);
+    fl = getFrontLeftRaw();
+    fr = getFrontRightRaw();
+    calibrateFront(/*isBlock=*/false);
+
+    if(abs(fl - fr) <= 1)
+      break;
+    adjutstTurnLeftTicks(fr - fl);
+    trial++;
+  } while (trial < kMaxCalibrationTrialTurn);
+
+  trial = 0;
+
+  do {
+    for (int i = 0; i < 4; i++) {
+      turnRight(90);
+      delay(100);
+    }
+    delay(300);
+    fl = getFrontLeftRaw();
+    fr = getFrontRightRaw();
+    calibrateFront(/*isBlock=*/false);
+
+    if(abs(fl - fr) <= 1)
+      break;
+    adjutstTurnRightTicks(fl - fr);
+    trial++;
+  } while (trial < kMaxCalibrationTrialTurn);
 }
 
 // turn 180
