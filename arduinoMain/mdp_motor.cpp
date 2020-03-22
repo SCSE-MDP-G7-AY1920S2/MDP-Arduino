@@ -40,12 +40,16 @@ const int kTicksFast[15] = {308,  602,  905,  1202, 1498, 1800, 2098, 2400,
 constexpr int kMoveTicks5 = 125;
 constexpr int kMoveTicks10 = 305;
 
+constexpr int kMaxTurnTicksOffset = 5;
+constexpr int kMinTurnTicksOffset = -5;
 constexpr int kTurnTicksL90 = 396;
+int turnTicksLOffset = 0;
 constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
 constexpr int kTurnTicksL1 = 1;
 
 constexpr int kTurnTicksR90 = 395;
+int turnTicksROffset = 0;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
 constexpr int kTurnTicksR1 = 1;
@@ -245,7 +249,7 @@ void goBackwardTicks(int ticks) {
 
 void turnLeft(int angle) {
   if (angle >= 90 && angle % 90 == 0)
-    _turnLeftAngle(angle, /*stepSize=*/90, kTurnTicksL90, kTurnFastSpeed,
+    _turnLeftAngle(angle, /*stepSize=*/90, kTurnTicksL90 + turnTicksLOffset, kTurnFastSpeed,
                    ShortTurnPID);
   else if (angle % 45 == 0)
     _turnLeftAngle(angle, /*stepSize=*/45, kTurnTicksL45, kTurnNormalSpeed,
@@ -260,7 +264,7 @@ void turnLeft(int angle) {
 
 void turnRight(int angle) {
   if (angle >= 90 && angle % 90 == 0)
-    _turnLeftAngle(angle, /*stepSize=*/90, kTurnTicksR90, kTurnFastSpeed,
+    _turnLeftAngle(angle, /*stepSize=*/90, kTurnTicksR90 + turnTicksROffset, kTurnFastSpeed,
                    ShortTurnPID, /*reverse=*/true);
   else if (angle % 45 == 0)
     _turnLeftAngle(angle, /*stepSize=*/45, kTurnTicksR45, kTurnNormalSpeed,
@@ -271,6 +275,18 @@ void turnRight(int angle) {
   else
     _turnLeftAngle(angle, /*stepSize=*/1, kTurnTicksR1, kTurnSlowSpeed,
                    ShortTurnPID, /*reverse=*/true);
+}
+
+void adjutstTurnLeftTicks(int delta) {
+  turnTicksLOffset += delta;
+  turnTicksLOffset = min(turnTicksLOffset, kMaxTurnTicksOffset);
+  turnTicksLOffset = max(turnTicksLOffset, kMinTurnTicksOffset);
+}
+
+void adjutstTurnRightTicks(int delta) {
+  turnTicksROffset += delta;
+  turnTicksROffset = min(turnTicksROffset, kMaxTurnTicksOffset);
+  turnTicksROffset = max(turnTicksROffset, kMinTurnTicksOffset);
 }
 
 void turnLeftTicks(int ticks) { _turnLeftTicks(ticks, kTurnSlowSpeed); }
