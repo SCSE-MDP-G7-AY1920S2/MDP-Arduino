@@ -42,6 +42,7 @@ void loop() {
       case 'W':  // exploration move front.
         goForward();
         kForwardCalibrationInit++;
+        delay(100);
         sendSensor("MF");
         break;
 
@@ -53,12 +54,14 @@ void loop() {
       case 'A':  // exploration turn left.
         turnLeft(90);
         kForwardCalibrationInit = 0;
+        delay(100);
         sendSensor("MF");
         break;
 
       case 'D':  // exploration turn right.
         turnRight(90);
         kForwardCalibrationInit = 0;
+        delay(100);
         sendSensor("MF");
         break;
 
@@ -88,21 +91,22 @@ void loop() {
         break;
 
       case 'Q':  // calibrate when facing east for exploration.
-        // calibrateStart();
-        // delay(500);
-        // initCalibration = true;
-        // calibrateStart();
-        // initCalibration = false;
-        // sendFin();
-        // break;
-      case 'q':  // calibrate when facing east for fastest path.
-        calibrateStart();
+        calibrateStart(true);
         delay(500);
         initCalibration = true;
-        turnRight(90);
+        calibrateStart(true);
+        initCalibration = false;
+        sendFin();
+        break;
+
+      case 'q':  // calibrate when facing east for fastest path.
+        calibrateStart(/*firstCali*/ true);
+        delay(500);
+        initCalibration = true;
+        //turnRight(90);
         adjustTurnTicks();
-        turnLeft(90);
-        calibrateStart();
+        //turnLeft(90);
+        calibrateStart(/*firstCali*/ false);
         initCalibration = false;
         sendFin();
         break;
@@ -196,6 +200,36 @@ void alignFront() {
   endMotor();
 }
 
+// align robot using staggered blocks
+void alignStaggerFront(){
+  int frOffset = (getFrontRight() - 1)*100;
+  int flOffset = (getFrontLeft() - 1)*100;
+  int fr = getFrontRightRaw() + flOffset;
+  int fl = getFrontLeftRaw() + frOffset;
+  int diff = fr - fl;
+  int trial = 0;
+  int maxTrial =
+      initCalibration ? kMaxCalibrationTrialInit : kMaxCalibrationTrial;
+
+  startMotor();
+
+  while (trial < maxTrial && abs(diff) > 1) {
+    delay(10);
+    if (fl > fr)
+      turnRightTicks(1);
+
+    else if (fr > fl)
+      turnLeftTicks(1);
+
+    fr = getFrontRightRaw() + flOffset;
+    fl = getFrontLeftRaw() + frOffset;
+    diff = fr - fl;
+
+    trial++;
+  }
+  endMotor();
+}
+
 // align robot to the wall (distance)
 void distanceFront(bool isBlock) {
   int trial = 0;
@@ -236,7 +270,7 @@ void adjustTurnTicks() {
     diff = abs(fl - fr);
     if(diff <= kTurnTicksAcceptableDiff)
       break;
-    diff /= 2;
+    diff /= 3;
     adjutstTurnLeftTicks(fr > fl ? diff : -diff);
     trial++;
   } while (trial < kMaxCalibrationTrialTurn);
@@ -257,7 +291,7 @@ void adjustTurnTicks() {
     diff = abs(fl - fr);
     if(diff <= kTurnTicksAcceptableDiff)
       break;
-    diff /= 2;
+    diff /= 3;
     adjutstTurnRightTicks(fl > fr ? diff : -diff);
     trial++;
   } while (trial < kMaxCalibrationTrialTurn);
@@ -303,7 +337,8 @@ void doFastAction(String com, bool lastAction) {
     if (lastAction) moveDistance--;
     if (moveDistance > 0 && moveDistance <= 15) {
       goForwardFast(moveDistance * 10);
-      isNearObstacle();
+      delay(100);
+      //isNearObstacle();
     }
     if (lastAction) {
       if (moveDistance > 0) delay(150);
@@ -349,8 +384,7 @@ void maybeMoveOneGrid() {
 // if front sensors are within 2 grids of any walls/ blocks
 void isNearObstacle(){
   if(getFrontLeft() == 1 && getFrontRight() == 1)
-    alignFront();
-
+      alignFront();
   if(getFrontMiddle() == 1)
     distanceFront(/*isBlock*/ false);
 }
@@ -383,13 +417,15 @@ void calibrateAll() {
 }
 
 // align against side and back wall
-void calibrateStart() {
-  turnRight(90);
-  delay(100);
-  alignFront();
-  delay(100);
-  distanceFront(/*isBlock=*/false);
-  delay(100);
+void calibrateStart(boolean firstCali) {
+  if(firstCali){
+    turnRight(90);
+    delay(100);
+    alignFront();
+    delay(100);
+    distanceFront(/*isBlock=*/false);
+    delay(100);
+  }
   turnRight(90);
   delay(100);
   alignFront();
@@ -400,9 +436,11 @@ void calibrateStart() {
   delay(100);
   distanceFront(/*isBlock=*/false);
   delay(100);
-  turnLeft(90);
-  delay(100);
-  parallelWall();
+  if(firstCali){
+    turnLeft(90);
+    delay(100);
+    parallelWall();
+  }
 }
 
 /* For checklist - need to do sharp/gentle turn

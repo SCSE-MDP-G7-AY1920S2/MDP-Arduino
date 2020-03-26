@@ -11,7 +11,7 @@
 namespace {
 // Speed config.
 constexpr int kMoveFastSpeed = 385;
-constexpr int kMoveSlowSpeed = 350;
+constexpr int kMoveSlowSpeed = 320;
 constexpr int kMoveTickSpeed = 70;
 constexpr int kTurnFastSpeed = 250;
 constexpr int kTurnNormalSpeed = 280;
@@ -21,7 +21,7 @@ constexpr int kTurnSlowSpeed = 70;
 const unsigned SampleTime = 5;
 unsigned long lastTime = millis();
 bool shouldResetPID = false;
-FastPID ShortTurnPID(/*kp=*/16.8, /*ki=*/7.7, /*kd=*/0,
+FastPID ShortTurnPID(/*kp=*/17.2, /*ki=*/8.2, /*kd=*/0,
                      /*hz=*/200, /*bits=*/16, /*sign=*/true);
 FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
                 /*hz=*/200, /*bits=*/16, /*sign=*/true);
@@ -29,10 +29,10 @@ FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
 // PID adjustments.
 // slanted left -> reduce offset; slanted right -> increase offset.
 // if skewOffset is below 1, PID need to be re-configured.
-constexpr double kSkewOffsetSlow = 2.2;
+constexpr double kSkewOffsetSlow = 1;
 constexpr double kSkewOffsetFast = 2.1;
 constexpr double kSkewOffsetFastLong = 2.8;
-constexpr double kSkewOffsetTurn = 1.2;
+constexpr double kSkewOffsetTurn = 1;
 
 // Ticks.
 int moveForwardOffset = 0;
@@ -52,7 +52,7 @@ constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
 constexpr int kTurnTicksL1 = 1;
 
-constexpr int kTurnTicksR90 = 398;
+constexpr int kTurnTicksR90 = 396;
 int turnTicksROffset = 0;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
