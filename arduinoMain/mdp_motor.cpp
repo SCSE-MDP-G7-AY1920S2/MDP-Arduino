@@ -32,7 +32,7 @@ FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
 constexpr double kSkewOffsetSlow = 1;
 constexpr double kSkewOffsetFast = 2.1;
 constexpr double kSkewOffsetFastLong = 2.8;
-constexpr double kSkewOffsetTurn = 1;
+constexpr double kSkewOffsetTurn = 2;
 
 // Ticks.
 int moveForwardOffset = 0;
@@ -166,7 +166,7 @@ void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
         int tickOffset = pid.step(rightTick, leftTick);
 
         int leftSpeed = reverse ? (currentSpeed + tickOffset / kSkewOffsetTurn)
-                                : -(currentSpeed + tickOffset / kSkewOffsetTurn);
+                                : -(currentSpeed + tickOffset);
         int rightSpeed = reverse ? -(currentSpeed - tickOffset)
                                  : (currentSpeed - tickOffset);
         md.setSpeeds(leftSpeed, rightSpeed);
