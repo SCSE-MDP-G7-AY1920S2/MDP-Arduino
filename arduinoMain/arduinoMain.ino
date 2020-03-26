@@ -342,12 +342,11 @@ void maybeMoveOneGrid() {
 // For fastest path, aligns the robot against the obstacle
 // if front sensors are within 2 grids of any walls/ blocks
 void isNearObstacle(){
-  if(getFrontLeft() == 1 && getFrontRight() == 1){
+  if(getFrontLeft() == 1 && getFrontRight() == 1)
     alignFront();
-  }
 
-  if(getFrontMiddle() == 1){
-    distanceFront();
+  if(getFrontMiddle() == 1)
+    distanceFront(/*isBlock*/ false);
 }
 
 // combines alignFront and distanceFront function
