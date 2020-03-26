@@ -210,7 +210,7 @@ void distanceFront(bool isBlock) {
 // Adjust the turn ticks based on fl and fr sensor readings.
 // This function assusmes that the robot is facing a wall.
 void adjustTurnTicks() {
-  int fl, fr;
+  int fl, fr, diff;
   int trial = 0;
   calibrateFront(/*isBlock=*/false);
   do {
@@ -223,9 +223,11 @@ void adjustTurnTicks() {
     fr = getFrontRightRaw();
     calibrateFront(/*isBlock=*/false);
 
-    if(abs(fl - fr) <= 1)
+    diff = abs(fl - fr);
+    if(diff <= 1)
       break;
-    adjutstTurnLeftTicks(fr - fl);
+    diff--;
+    adjutstTurnLeftTicks(fr > fl ? diff : -diff);
     trial++;
   } while (trial < kMaxCalibrationTrialTurn);
 
@@ -241,9 +243,11 @@ void adjustTurnTicks() {
     fr = getFrontRightRaw();
     calibrateFront(/*isBlock=*/false);
 
-    if(abs(fl - fr) <= 1)
+    diff = abs(fl - fr);
+    if(diff <= 1)
       break;
-    adjutstTurnRightTicks(fl - fr);
+    diff--;
+    adjutstTurnRightTicks(fl > fr ? diff : -diff);
     trial++;
   } while (trial < kMaxCalibrationTrialTurn);
 }
