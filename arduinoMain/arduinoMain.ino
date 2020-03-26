@@ -86,7 +86,16 @@ void loop() {
         sendFin();
         break;
 
-      case 'Q':  // calibrate when facing east at the start.
+      case 'Q':  // calibrate when facing east for exploration.
+        calibrateStart();
+        delay(500);
+        initCalibration = true;
+        calibrateStart();
+        initCalibration = false;
+        sendFin();
+        break;
+
+      case 'q':  // calibrate when facing east for fastest path.
         calibrateStart();
         delay(500);
         initCalibration = true;
