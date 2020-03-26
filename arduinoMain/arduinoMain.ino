@@ -8,7 +8,7 @@ const int kMaxCalibrationTrial = 15;
 const int kMaxCalibrationTrialInit = 30;
 const int kMaxCalibrationTrialTurn = 3; 
 const int kForwardCalibrationGrids = 3;
-const int kTurnTicksAcceptableDiff = 1;
+const int kTurnTicksAcceptableDiff = 2;
 int kForwardCalibrationInit = 0;
 
 bool initCalibration = false;
@@ -170,6 +170,7 @@ void parallelWall() {
 // align robot to the front (angle)
 void alignFront() {
   int frOffset = 0;
+  delay(50);
   int fr = getFrontRightRaw() + frOffset;
   int fl = getFrontLeftRaw();
   int diff = fr - fl;
