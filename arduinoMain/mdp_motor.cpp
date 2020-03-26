@@ -282,13 +282,13 @@ void turnRight(int angle) {
 }
 
 void adjutstTurnLeftTicks(int delta) {
-  turnTicksLOffset += delta/4;
+  turnTicksLOffset += delta;
   turnTicksLOffset = min(turnTicksLOffset, kMaxTurnTicksOffset);
   turnTicksLOffset = max(turnTicksLOffset, kMinTurnTicksOffset);
 }
 
 void adjutstTurnRightTicks(int delta) {
-  turnTicksROffset += delta/4;
+  turnTicksROffset += delta;
   turnTicksROffset = min(turnTicksROffset, kMaxTurnTicksOffset);
   turnTicksROffset = max(turnTicksROffset, kMinTurnTicksOffset);
 }
