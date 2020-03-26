@@ -13,7 +13,7 @@ namespace {
 constexpr int kMoveFastSpeed = 385;
 constexpr int kMoveSlowSpeed = 320;
 constexpr int kMoveTickSpeed = 70;
-constexpr int kTurnFastSpeed = 250;
+constexpr int kTurnFastSpeed = 200;
 constexpr int kTurnNormalSpeed = 280;
 constexpr int kTurnSlowSpeed = 70;
 
@@ -32,7 +32,7 @@ FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
 constexpr double kSkewOffsetSlow = 1;
 constexpr double kSkewOffsetFast = 2.1;
 constexpr double kSkewOffsetFastLong = 2.8;
-constexpr double kSkewOffsetTurn = 2;
+constexpr double kSkewOffsetTurn = 1;
 
 // Ticks.
 int moveForwardOffset = 0;
@@ -46,13 +46,13 @@ constexpr int kMoveTicks10 = 310;
 
 constexpr int kMaxTurnTicksOffset = 5;
 constexpr int kMinTurnTicksOffset = -5;
-constexpr int kTurnTicksL90 = 400;
+constexpr int kTurnTicksL90 = 395;
 int turnTicksLOffset = 0;
 constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
 constexpr int kTurnTicksL1 = 1;
 
-constexpr int kTurnTicksR90 = 396;
+constexpr int kTurnTicksR90 = 393;
 int turnTicksROffset = 0;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
@@ -160,7 +160,7 @@ void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
     while (rightTick <= turnTicks || leftTick <= turnTicks) {
       unsigned long now = millis();
       // Reduce speed at the end of the turn.
-      if (turnTicks - rightTick < 50) currentSpeed = 120;
+      // if (turnTicks - rightTick < 50) currentSpeed = 120;
       if (now - lastTime >= SampleTime) {
         // rightTick as setpoint, leftTick as feedback.
         int tickOffset = pid.step(rightTick, leftTick);

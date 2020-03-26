@@ -113,7 +113,7 @@ void loop() {
 
       case 'G': // robot come back facing south
         initCalibration = true;
-        adjustTurnTicks();
+        // adjustTurnTicks();
         southToNorth();
         initCalibration = false;
         sendFin();
@@ -121,7 +121,7 @@ void loop() {
 
       case 'H': // robot come back facing west
         initCalibration = true;
-        adjustTurnTicks();
+        // adjustTurnTicks();
         turnLeft(90);
         southToNorth();
         initCalibration = false;
