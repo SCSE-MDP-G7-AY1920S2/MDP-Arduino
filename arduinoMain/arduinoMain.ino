@@ -236,7 +236,7 @@ void adjustTurnTicks() {
     diff = abs(fl - fr);
     if(diff <= kTurnTicksAcceptableDiff)
       break;
-    diff -= kTurnTicksAcceptableDiff;
+    diff /= 2;
     adjutstTurnLeftTicks(fr > fl ? diff : -diff);
     trial++;
   } while (trial < kMaxCalibrationTrialTurn);
@@ -257,7 +257,7 @@ void adjustTurnTicks() {
     diff = abs(fl - fr);
     if(diff <= kTurnTicksAcceptableDiff)
       break;
-    diff -= kTurnTicksAcceptableDiff;
+    diff /= 2;
     adjutstTurnRightTicks(fl > fr ? diff : -diff);
     trial++;
   } while (trial < kMaxCalibrationTrialTurn);
