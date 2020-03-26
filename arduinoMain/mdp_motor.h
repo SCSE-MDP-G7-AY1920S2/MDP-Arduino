@@ -12,6 +12,7 @@ void turnLeft(int angle);
 void turnLeftRamp(int angle);
 void turnLeftTicks(int ticks);
 void adjutstTurnLeftTicks(int delta);
+void adjustMoveForwardTicks(int delta);
 void turnRight(int angle);
 void turnRightRamp(int angle);
 void turnRightTicks(int ticks);

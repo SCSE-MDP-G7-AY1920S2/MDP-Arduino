@@ -6,7 +6,11 @@ String command = "";
 
 const int kMaxCalibrationTrial = 15;
 const int kMaxCalibrationTrialInit = 30;
-const int kMaxCalibrationTrialTurn = 3;
+const int kMaxCalibrationTrialTurn = 3; 
+const int kForwardCalibrationGrids = 3;
+const int kTurnTicksAcceptableDiff = 2;
+int kForwardCalibrationInit = 0;
+
 bool initCalibration = false;
 bool DEBUG = false;
 
@@ -37,6 +41,7 @@ void loop() {
 
       case 'W':  // exploration move front.
         goForward();
+        kForwardCalibrationInit++;
         sendSensor("MF");
         break;
 
@@ -47,11 +52,13 @@ void loop() {
 
       case 'A':  // exploration turn left.
         turnLeft(90);
+        kForwardCalibrationInit = 0;
         sendSensor("MF");
         break;
 
       case 'D':  // exploration turn right.
         turnRight(90);
+        kForwardCalibrationInit = 0;
         sendSensor("MF");
         break;
 
@@ -76,6 +83,7 @@ void loop() {
 
       case 'C':  // align robot using front and side walls.
         calibrateAll();
+        kForwardCalibrationInit = 0;
         sendFin();
         break;
 
@@ -143,7 +151,7 @@ void parallelWall() {
       initCalibration ? kMaxCalibrationTrialInit : kMaxCalibrationTrial;
   startMotor();
 
-  while (trial < maxTrial && abs(diff) > 0) {
+  while (trial < maxTrial && abs(diff) > 1) {
     if (rf < rb)
       turnLeftTicks(1);
 
@@ -171,7 +179,7 @@ void alignFront() {
 
   startMotor();
 
-  while (trial < maxTrial && abs(diff) > 0) {
+  while (trial < maxTrial && abs(diff) > 1) {
     if (fl > fr)
       turnRightTicks(1);
 
@@ -216,17 +224,18 @@ void adjustTurnTicks() {
   do {
     for(int i = 0; i < 4; i++) {
       turnLeft(90);
-      delay(100);
+      delay(300);
     }
-    delay(300);
+    delay(100);
     fl = getFrontLeftRaw();
     fr = getFrontRightRaw();
     calibrateFront(/*isBlock=*/false);
+    delay(100);
 
     diff = abs(fl - fr);
-    if(diff <= 1)
+    if(diff <= kTurnTicksAcceptableDiff)
       break;
-    diff--;
+    diff -= kTurnTicksAcceptableDiff;
     adjutstTurnLeftTicks(fr > fl ? diff : -diff);
     trial++;
   } while (trial < kMaxCalibrationTrialTurn);
@@ -236,17 +245,18 @@ void adjustTurnTicks() {
   do {
     for (int i = 0; i < 4; i++) {
       turnRight(90);
-      delay(100);
+      delay(300);
     }
-    delay(300);
+    delay(100);
     fl = getFrontLeftRaw();
     fr = getFrontRightRaw();
     calibrateFront(/*isBlock=*/false);
+    delay(100);
 
     diff = abs(fl - fr);
-    if(diff <= 1)
+    if(diff <= kTurnTicksAcceptableDiff)
       break;
-    diff--;
+    diff -= kTurnTicksAcceptableDiff;
     adjutstTurnRightTicks(fl > fr ? diff : -diff);
     trial++;
   } while (trial < kMaxCalibrationTrialTurn);
@@ -292,6 +302,7 @@ void doFastAction(String com, bool lastAction) {
     if (lastAction) moveDistance--;
     if (moveDistance > 0 && moveDistance <= 15) {
       goForwardFast(moveDistance * 10);
+      isNearObstacle();
     }
     if (lastAction) {
       if (moveDistance > 0) delay(150);
@@ -333,6 +344,16 @@ void maybeMoveOneGrid() {
     goForwardHalf();
 }
 
+// For fastest path, aligns the robot against the obstacle
+// if front sensors are within 2 grids of any walls/ blocks
+void isNearObstacle(){
+  if(getFrontLeft() == 1 && getFrontRight() == 1)
+    alignFront();
+
+  if(getFrontMiddle() == 1)
+    distanceFront(/*isBlock*/ false);
+}
+
 // combines alignFront and distanceFront function
 void calibrateFront(bool isBlock) {
   distanceFront(isBlock);
@@ -343,6 +364,12 @@ void calibrateFront(bool isBlock) {
 
 // align against front and side wall
 void calibrateAll() {
+  // adjust the move forward ticks based on fr and fl readings
+  // only occurs after the robot moves for >= 3 'W' followed by a 'C'
+  if(kForwardCalibrationInit >= kForwardCalibrationGrids){
+    int fm = getFrontMiddleRaw();
+    adjustMoveForwardTicks(fm - 114);
+  }
   calibrateFront(/*isBlock=*/false);
   delay(100);
   turnRight(90);
