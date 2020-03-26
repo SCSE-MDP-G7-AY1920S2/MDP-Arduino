@@ -29,20 +29,20 @@ FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
 // PID adjustments.
 // slanted left -> reduce offset; slanted right -> increase offset.
 // if skewOffset is below 1, PID need to be re-configured.
-constexpr double kSkewOffsetSlow = 1;
+constexpr double kSkewOffsetSlow = 1.5;
 constexpr double kSkewOffsetFast = 2.1;
 constexpr double kSkewOffsetFastLong = 2.8;
 constexpr double kSkewOffsetTurn = 1;
 
 // Ticks.
 int moveForwardOffset = 0;
-constexpr int kMaxMoveForwardOffset = 3;
-constexpr int kMinMoveForwardOffset = -3;
+constexpr int kMaxMoveForwardOffset = 5;
+constexpr int kMinMoveForwardOffset = -5;
 
 const int kTicksFast[15] = {308,  602,  905,  1202, 1498, 1800, 2098, 2400,
                             2705, 3010, 3310, 3610, 3915, 4221, 4520};
 constexpr int kMoveTicks5 = 125;
-constexpr int kMoveTicks10 = 310;
+constexpr int kMoveTicks10 = 308;
 
 constexpr int kMaxTurnTicksOffset = 5;
 constexpr int kMinTurnTicksOffset = -5;

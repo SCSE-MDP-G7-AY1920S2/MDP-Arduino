@@ -384,9 +384,11 @@ void maybeMoveOneGrid() {
 // if front sensors are within 2 grids of any walls/ blocks
 void isNearObstacle(){
   if(getFrontLeft() == 1 && getFrontRight() == 1)
-      alignFront();
+    alignFront();
   if(getFrontMiddle() == 1)
     distanceFront(/*isBlock*/ false);
+  if(getRightFront() == 1 && getRightBack() == 1)
+    parallelWall();
 }
 
 // combines alignFront and distanceFront function
