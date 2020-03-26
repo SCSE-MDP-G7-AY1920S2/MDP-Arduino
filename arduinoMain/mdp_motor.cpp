@@ -11,9 +11,9 @@
 namespace {
 // Speed config.
 constexpr int kMoveFastSpeed = 385;
-constexpr int kMoveSlowSpeed = 360;
+constexpr int kMoveSlowSpeed = 350;
 constexpr int kMoveTickSpeed = 70;
-constexpr int kTurnFastSpeed = 280;
+constexpr int kTurnFastSpeed = 250;
 constexpr int kTurnNormalSpeed = 280;
 constexpr int kTurnSlowSpeed = 70;
 
@@ -29,7 +29,7 @@ FastPID LongPID(/*kp=*/7.3, /*ki=*/2.65, /*kd=*/0.0005,
 // PID adjustments.
 // slanted left -> reduce offset; slanted right -> increase offset.
 // if skewOffset is below 1, PID need to be re-configured.
-constexpr double kSkewOffsetSlow = 2;
+constexpr double kSkewOffsetSlow = 2.2;
 constexpr double kSkewOffsetFast = 2.1;
 constexpr double kSkewOffsetFastLong = 2.8;
 constexpr double kSkewOffsetTurn = 1.2;
@@ -42,17 +42,17 @@ constexpr int kMinMoveForwardOffset = -3;
 const int kTicksFast[15] = {308,  602,  905,  1202, 1498, 1800, 2098, 2400,
                             2705, 3010, 3310, 3610, 3915, 4221, 4520};
 constexpr int kMoveTicks5 = 125;
-constexpr int kMoveTicks10 = 305;
+constexpr int kMoveTicks10 = 310;
 
 constexpr int kMaxTurnTicksOffset = 5;
 constexpr int kMinTurnTicksOffset = -5;
-constexpr int kTurnTicksL90 = 402;
+constexpr int kTurnTicksL90 = 400;
 int turnTicksLOffset = 0;
 constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
 constexpr int kTurnTicksL1 = 1;
 
-constexpr int kTurnTicksR90 = 401;
+constexpr int kTurnTicksR90 = 398;
 int turnTicksROffset = 0;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
@@ -160,7 +160,7 @@ void _turnLeftAngle(int totalAngle, int stepSize, int turnTicks,
     while (rightTick <= turnTicks || leftTick <= turnTicks) {
       unsigned long now = millis();
       // Reduce speed at the end of the turn.
-      if (turnTicks - rightTick < 80) currentSpeed = 120;
+      if (turnTicks - rightTick < 50) currentSpeed = 120;
       if (now - lastTime >= SampleTime) {
         // rightTick as setpoint, leftTick as feedback.
         int tickOffset = pid.step(rightTick, leftTick);

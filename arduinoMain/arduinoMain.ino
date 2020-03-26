@@ -151,6 +151,7 @@ void parallelWall() {
   startMotor();
 
   while (trial < maxTrial && abs(diff) > 1) {
+    delay(10);
     if (rf < rb)
       turnLeftTicks(1);
 
@@ -169,7 +170,6 @@ void parallelWall() {
 // align robot to the front (angle)
 void alignFront() {
   int frOffset = 0;
-  delay(50);
   int fr = getFrontRightRaw() + frOffset;
   int fl = getFrontLeftRaw();
   int diff = fr - fl;
@@ -180,6 +180,7 @@ void alignFront() {
   startMotor();
 
   while (trial < maxTrial && abs(diff) > 1) {
+    delay(10);
     if (fl > fr)
       turnRightTicks(1);
 
