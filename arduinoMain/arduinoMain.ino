@@ -99,11 +99,9 @@ void loop() {
         calibrateStart();
         delay(500);
         initCalibration = true;
-        delay(300);
-        // turnRight(90);
-        // adjustTurnTicks();
-        // delay(300);
-        // turnLeft(90);
+        turnRight(90);
+        adjustTurnTicks();
+        turnLeft(90);
         calibrateStart();
         initCalibration = false;
         sendFin();
