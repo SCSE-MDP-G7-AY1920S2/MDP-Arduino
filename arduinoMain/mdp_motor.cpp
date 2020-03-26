@@ -46,13 +46,13 @@ constexpr int kMoveTicks10 = 305;
 
 constexpr int kMaxTurnTicksOffset = 5;
 constexpr int kMinTurnTicksOffset = -5;
-constexpr int kTurnTicksL90 = 398;
+constexpr int kTurnTicksL90 = 402;
 int turnTicksLOffset = 0;
 constexpr int kTurnTicksL45 = 186;
 constexpr int kTurnTicksL10 = 28;
 constexpr int kTurnTicksL1 = 1;
 
-constexpr int kTurnTicksR90 = 397;
+constexpr int kTurnTicksR90 = 402;
 int turnTicksROffset = 0;
 constexpr int kTurnTicksR45 = 186;
 constexpr int kTurnTicksR10 = 28;
