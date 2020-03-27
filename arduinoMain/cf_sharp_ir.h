@@ -7,7 +7,7 @@
 class CFSharpIR {
  public:
   CFSharpIR(int ir_pin, const uint32_t sensor_type, double m, double b,
-           double k);
+            double k);
   static const uint32_t GP2Y0A21YK0F = 1080;
   static const uint32_t GP2Y0A02YK0F = 20150;
   int getIrPin() const;

@@ -6,7 +6,7 @@ String command = "";
 
 const int kMaxCalibrationTrial = 15;
 const int kMaxCalibrationTrialInit = 30;
-const int kMaxCalibrationTrialTurn = 3; 
+const int kMaxCalibrationTrialTurn = 3;
 const int kForwardCalibrationGrids = 3;
 const int kTurnTicksAcceptableDiff = 2;
 int kForwardCalibrationInit = 0;
@@ -100,18 +100,19 @@ void loop() {
         break;
 
       case 'q':  // calibrate when facing east for fastest path.
+      // Deprecated.
         calibrateStart(/*firstCali*/ true);
         delay(500);
         initCalibration = true;
-        //turnRight(90);
+        // turnRight(90);
         adjustTurnTicks();
-        //turnLeft(90);
+        // turnLeft(90);
         calibrateStart(/*firstCali*/ false);
         initCalibration = false;
         sendFin();
         break;
 
-      case 'G': // robot come back facing south
+      case 'G':  // robot come back facing south
         initCalibration = true;
         // adjustTurnTicks();
         southToNorth();
@@ -119,7 +120,7 @@ void loop() {
         sendFin();
         break;
 
-      case 'H': // robot come back facing west
+      case 'H':  // robot come back facing west
         initCalibration = true;
         // adjustTurnTicks();
         turnLeft(90);
@@ -142,9 +143,9 @@ void loop() {
   }
 }
 
-// aligns the robot against the wall
+// aligns the robot against the wall.
 void parallelWall() {
-  // Right front further to obstacle by 1
+  // Right front further to obstacle by 1.
   int rfOffset = -4;
   int rf = getRightFrontRaw() + rfOffset;
   int rb = getRightBackRaw();
@@ -171,7 +172,7 @@ void parallelWall() {
   endMotor();
 }
 
-// align robot to the front (angle)
+// align robot to the front (angle).
 void alignFront() {
   int frOffset = 0;
   int fr = getFrontRightRaw() + frOffset;
@@ -200,10 +201,11 @@ void alignFront() {
   endMotor();
 }
 
-// align robot using staggered blocks
-void alignStaggerFront(){
-  int frOffset = (getFrontRight() - 1)*100;
-  int flOffset = (getFrontLeft() - 1)*100;
+// align robot using staggered blocks.
+// Deprecated.
+void alignStaggerFront() {
+  int frOffset = (getFrontRight() - 1) * 100;
+  int flOffset = (getFrontLeft() - 1) * 100;
   int fr = getFrontRightRaw() + flOffset;
   int fl = getFrontLeftRaw() + frOffset;
   int diff = fr - fl;
@@ -252,12 +254,13 @@ void distanceFront(bool isBlock) {
 
 // Adjust the turn ticks based on fl and fr sensor readings.
 // This function assusmes that the robot is facing a wall.
+// Deprecated.
 void adjustTurnTicks() {
   int fl, fr, diff;
   int trial = 0;
   calibrateFront(/*isBlock=*/false);
   do {
-    for(int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
       turnLeft(90);
       delay(300);
     }
@@ -268,8 +271,7 @@ void adjustTurnTicks() {
     delay(100);
 
     diff = abs(fl - fr);
-    if(diff <= kTurnTicksAcceptableDiff)
-      break;
+    if (diff <= kTurnTicksAcceptableDiff) break;
     diff /= 3;
     adjutstTurnLeftTicks(fr > fl ? diff : -diff);
     trial++;
@@ -289,15 +291,13 @@ void adjustTurnTicks() {
     delay(100);
 
     diff = abs(fl - fr);
-    if(diff <= kTurnTicksAcceptableDiff)
-      break;
+    if (diff <= kTurnTicksAcceptableDiff) break;
     diff /= 3;
     adjutstTurnRightTicks(fl > fr ? diff : -diff);
     trial++;
   } while (trial < kMaxCalibrationTrialTurn);
 }
 
-// turn 180
 void southToNorth() {
   calibrateFront(/*isBlock=*/false);
   delay(100);
@@ -308,7 +308,6 @@ void southToNorth() {
   turnRight(90);
 }
 
-// turn right 90
 void eastToNorth() {
   calibrateFront(/*isBlock=*/false);
   delay(100);
@@ -381,15 +380,13 @@ void maybeMoveOneGrid() {
 }
 
 // For fastest path, aligns the robot against the obstacle
-// if front sensors are within 2 grids of any walls/ blocks
-void isNearObstacle(){
-  if(getFrontLeft() == 1 && getFrontRight() == 1)
-    alignFront();
-  if(getFrontMiddle() == 1)
-    distanceFront(/*isBlock*/ false);
+// if front sensors are within 2 grids of any walls/ blocks.
+void isNearObstacle() {
+  if (getFrontLeft() == 1 && getFrontRight() == 1) alignFront();
+  if (getFrontMiddle() == 1) distanceFront(/*isBlock*/ false);
 }
 
-// combines alignFront and distanceFront function
+// combines alignFront and distanceFront function.
 void calibrateFront(bool isBlock) {
   distanceFront(isBlock);
   delay(100);
@@ -397,11 +394,11 @@ void calibrateFront(bool isBlock) {
   delay(100);
 }
 
-// align against front and side wall
+// align against front and side wall.
 void calibrateAll() {
   // adjust the move forward ticks based on fr and fl readings
-  // only occurs after the robot moves for >= 3 'W' followed by a 'C'
-  if(kForwardCalibrationInit >= kForwardCalibrationGrids){
+  // only occurs after the robot moves for >= 3 'W' followed by a 'C'.
+  if (kForwardCalibrationInit >= kForwardCalibrationGrids) {
     int fm = getFrontMiddleRaw();
     adjustMoveForwardTicks(fm - 114);
   }
@@ -416,9 +413,9 @@ void calibrateAll() {
   parallelWall();
 }
 
-// align against side and back wall
+// align against side and back wall.
 void calibrateStart(boolean firstCali) {
-  if(firstCali){
+  if (firstCali) {
     turnRight(90);
     delay(100);
     alignFront();
@@ -436,16 +433,16 @@ void calibrateStart(boolean firstCali) {
   delay(100);
   distanceFront(/*isBlock=*/false);
   delay(100);
-  if(firstCali){
+  if (firstCali) {
     turnLeft(90);
     delay(100);
     parallelWall();
   }
 }
 
-/* For checklist - need to do sharp/gentle turn
-sharpAvoidance is for 90 degree turn
-tiltAvoidance is for 45 degree turn*/
+// For checklist - need to do sharp/gentle turn.
+// sharpAvoidance is for 90 degree turn.
+// tiltAvoidance is for 45 degree turn.
 void sharpAvoidance() {
   while (true) {
     goForward();

@@ -17,7 +17,7 @@ void sort(int a[], int n) {
 }  // namespace
 
 CFSharpIR::CFSharpIR(int ir_pin, const uint32_t model, double m, double b,
-                   double k)
+                     double k)
     : ir_pin_(ir_pin), model_(model), m_(m), b_(b), k_(k) {
   // Define pin as Input
   pinMode(ir_pin_, INPUT);

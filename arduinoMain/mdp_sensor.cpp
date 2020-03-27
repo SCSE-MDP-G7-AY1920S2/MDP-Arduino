@@ -28,15 +28,14 @@ constexpr int kRightBackBorderGrid2 = 25;
 constexpr int kLRMax = 64;
 constexpr int kLROffset = 9;
 
-// short IR sensor
-// c - calibrated
+// short IR sensor.
 CFSharpIR sr0c(s0, SRmodel, /*m=*/5.8027e+03, /*b=*/5.7073, /*k=*/3.2186);
 CFSharpIR sr1c(s1, SRmodel, /*m=*/7.0216e+03, /*b=*/36.6182, /*k=*/4.5791);
 CFSharpIR sr2c(s2, SRmodel, /*m=*/5.8207e+03, /*b=*/10.7342, /*k=*/3.1259);
 CFSharpIR sr4c(s4, SRmodel, /*m=*/6.5677e+03, /*b=*/18.9407, /*k=*/3.7055);
 CFSharpIR sr5c(s5, SRmodel, /*m=*/7.5070e+03, /*b=*/41.9073, /*k=*/5.0008);
 
-// long IR sensor
+// long IR sensor.
 ZSharpIR sr3c(s3, LRmodel);
 
 // return distance from sensors (grids).
@@ -69,14 +68,14 @@ int getLeftDistance(ZSharpIR& sensor) {
   return -1;
 }
 
-// return distance from sensors (cm).
+// return distance from sensors (mm).
 int getDistanceRaw(const CFSharpIR& sensor) { return sensor.distance(); }
 }  // namespace
 
 void setupSensorsCalibration() {
-    int tablesr3c[] = {2,   374, 447, 563, 525, 489, 447, 408, 371, 330,
+  int tablesr3c[] = {2,   374, 447, 563, 525, 489, 447, 408, 371, 330,
                      300, 274, 251, 233, 213, 201, 189, 182, 166, 0};
-    sr3c.ApplyCalibration(tablesr3c);
+  sr3c.ApplyCalibration(tablesr3c);
 }
 
 int getFrontRight() { return getFrontDistance(sr0c); }
@@ -117,6 +116,5 @@ void calibrateRaw() {
   delay(1500);
 }
 
-// calibrate sensors
-// calibration table of 20 value,
+// calibrate sensors. Not used in production.
 void calibrateSensors() {}
