@@ -338,7 +338,7 @@ void doFastAction(String com, bool lastAction) {
     if (moveDistance > 0 && moveDistance <= 15) {
       goForwardFast(moveDistance * 10);
       delay(100);
-      //isNearObstacle();
+      isNearObstacle();
     }
     if (lastAction) {
       if (moveDistance > 0) delay(150);
@@ -387,8 +387,6 @@ void isNearObstacle(){
     alignFront();
   if(getFrontMiddle() == 1)
     distanceFront(/*isBlock*/ false);
-  if(getRightFront() == 1 && getRightBack() == 1)
-    parallelWall();
 }
 
 // combines alignFront and distanceFront function
