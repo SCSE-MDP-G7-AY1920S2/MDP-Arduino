@@ -9,7 +9,6 @@ targets = $(addprefix $(sketch)/$(sketch).$(board_infix),.hex .with_bootloader.h
 
 all : $(targets)
 upload : $(targets)
-	$(info Uploading sketch to $(port)...)
 	arduino-cli upload -p $(port) $(flags) $(board) $(sketch)
 $(targets) & : $(src)
 	arduino-cli compile $(flags) $(board) $(sketch)
