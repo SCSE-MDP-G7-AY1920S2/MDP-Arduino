@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 # Compile the sketch locally.
 arduino-cli compile --fqbn arduino:avr:uno arduinoMain
 

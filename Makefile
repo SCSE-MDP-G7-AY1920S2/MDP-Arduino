@@ -1,7 +1,7 @@
 board = arduino:avr:uno
 sketch = arduinoMain
 flags = --fqbn
-port = /dev/ttyACM0
+port = /dev/ttyACM*
 
 board_infix = $(subst :,.,$(board))
 src = $(wildcard $(sketch)/*.ino) $(wildcard $(sketch)/*.cpp) $(wildcard $(sketch)/*.h)
